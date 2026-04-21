@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>功课</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@300;400&display=swap" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f4efe5; }
+    textarea::placeholder, input::placeholder { color: #b0a488; }
+    ::-webkit-scrollbar { height: 3px; width: 3px; }
+    ::-webkit-scrollbar-thumb { background: #d8cebc; border-radius: 2px; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.65; } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const EXERCISES = {
+2: [
+{ title: “Spiral Warmup”, author: “Lynda Barry”, instruction: “Hold one word or image from your day. Draw a spiral in your mind. Write whatever surfaces — don’t stop the hand. No sentences required.” },
+{ title: “Quick List”, author: “Sei Shonagon”, instruction: “Write a list: things that made your heart beat faster today. Five items, no explanations. Let the list be strange.” },
+{ title: “One Sense, Now”, author: “Practice”, instruction: “Pick the sense most alive in this moment. Two or three lines only — present tense, completely specific, no interpretation.” },
+],
+10: [
+{ title: “Daily Diary”, author: “Lynda Barry”, instruction: “Three columns in your mind: DID (7 things from last 24 hours) / SAW (7 things) / OVERHEARD (1 thing). Write fast. No editing.” },
+{ title: “X-Page”, author: “Lynda Barry”, instruction: “Pick an object or image from today. Spend 4 minutes filling the page with present-tense sensory details. Then write from it for 6 minutes.” },
+{ title: “Locate Yourself”, author: “Annie Dillard”, instruction: “Where are you right now? Write it with complete specificity — surface appearances, five senses, the history of this place. Don’t describe feelings.” },
+],
+60: [
+{ title: “Memory Recall”, author: “Lynda Barry”, instruction: “List ten instances of one thing from your past — kitchens, a recurring sound, cars. Pick the one that surfaces fastest. X-page it for 4 minutes. Then write the full scene.” },
+{ title: “Write About Winter in Summer”, author: “Annie Dillard”, instruction: “Write about something absent — out of season, out of reach, not here. Begin with what is present and let the absent thing arrive.” },
+{ title: “List Into Essay”, author: “Sei Shonagon”, instruction: “Begin: things that are near though distant / things that create the appearance of deep feeling. Write until one item opens into a door. Follow it.” },
+],
+};
+
+const SENSES = [“sight”, “sound”, “smell”, “taste”, “touch”];
+const SENSE_ZH = { sight: “所见”, sound: “所闻”, smell: “所嗅”, taste: “所尝”, touch: “所触” };
+const EMPTY_SENSE = { sight: [], sound: [], smell: [], taste: [], touch: [] };
+
+function getAgeStyle(createdAt, expiresAt) {
+const pct = Math.max(0, (expiresAt - Date.now()) / (expiresAt - createdAt));
+if (pct > 0.6) return { bg: “#dde8d8”, border: “#9db89a”, accent: “#3d5a38”, pulse: false };
+if (pct > 0.35) return { bg: “#ede8d0”, border: “#c8b870”, accent: “#5a4010”, pulse: false };
+if (pct > 0.12) return { bg: “#ede0c8”, border: “#c88840”, accent: “#5a2808”, pulse: false };
+return { bg: “#edd8c8”, border: “#c84830”, accent: “#4a1008”, pulse: true };
+}
+
+function fmt(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+
+function loadH2C() {
+return new Promise((resolve, reject) => {
+if (window.html2canvas) { resolve(window.html2canvas); return; }
+const sc = document.createElement(“script”);
+sc.src = “https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js”;
+sc.onload = () => resolve(window.html2canvas);
+sc.onerror = reject;
+document.head.appendChild(sc);
+});
+}
+
+const C = { bg: “#f4efe5”, ink: “#1e1810”, mid: “#4a3c28”, faint: “#8a7860”, rule: “#d8cebc”, card: “rgba(255,255,255,0.52)”, accent: “#2a2018” };
+const sLabel = { fontSize: 10, letterSpacing: “0.22em”, color: C.faint, textTransform: “uppercase”, fontFamily: “‘Cormorant Garamond’, serif”, marginBottom: 16 };
+const inp = { background: “transparent”, border: “none”, outline: “none”, fontFamily: “‘Cormorant Garamond’, serif”, color: C.ink };
+
+// ── BUILD PLAIN TEXT ──────────────────────────────────────────
+
+function buildText(senseLog, projects, sessions, projectEntries) {
+const date = new Date().toLocaleDateString(“zh-CN”, { year: “numeric”, month: “long”, day: “numeric”, weekday: “long” });
+let out = `功课  ${date}\n${"─".repeat(32)}\n\n`;
+
+const hasSenses = SENSES.some(s => senseLog[s]?.some(e => e.text));
+if (hasSenses) {
+out += `感知 · Noticing\n\n`;
+SENSES.forEach(s => {
+const entries = senseLog[s]?.filter(e => e.text) || [];
+if (!entries.length) return;
+out += `${SENSE_ZH[s]} · ${s}\n`;
+entries.forEach(e => { out += ` ${e.text}${e.location ?`  (${e.location})` : ""}\n`; });
+out += “\n”;
+});
+}
+
+// Projects
+const projectMap = {};
+projects.forEach(p => { projectMap[p.id] = { project: p, entries: projectEntries[p.id] || [], sessions: [] }; });
+sessions.forEach(s => {
+if (s.projectTitle) {
+const p = projects.find(x => x.title === s.projectTitle);
+if (p && projectMap[p.id]) projectMap[p.id].sessions.push(s);
+}
+});
+const hasProjects = Object.values(projectMap).some(p => p.entries.length || p.sessions.length);
+if (hasProjects) {
+out += `进行中 · Projects\n\n`;
+Object.values(projectMap).forEach(({ project: p, entries, sessions: ps }) => {
+if (!entries.length && !ps.length) return;
+out += `【${p.title}】\n\n`;
+entries.forEach(e => { out += `${e.savedAt}\n${e.text}\n\n`; });
+ps.forEach(s => { out += `${s.savedAt}  ${s.exerciseTitle}  (${fmt(s.duration)})\n${s.text}\n\n`; });
+});
+}
+
+const freeSessions = sessions.filter(s => !s.projectTitle);
+if (freeSessions.length) {
+out += `练习 · Practice\n\n`;
+freeSessions.forEach(s => {
+out += `${s.exerciseTitle}${s.author ? ` — ${s.author}` : ""}  ${s.savedAt}  (${fmt(s.duration)})\n`;
+out += `${s.text}\n\n`;
+});
+}
+
+return out.trim();
+}
+
+// ── EXPORT VISUAL VIEW ────────────────────────────────────────
+
+function ExportView({ senseLog, projects, sessions, projectEntries }) {
+const dateStr = new Date().toLocaleDateString(“zh-CN”, { year: “numeric”, month: “long”, day: “numeric”, weekday: “long” });
+const hasSenses = SENSES.some(s => senseLog[s]?.some(e => e.text));
+
+const projectMap = {};
+projects.forEach(p => { projectMap[p.id] = { project: p, entries: projectEntries[p.id] || [], sessions: [] }; });
+sessions.forEach(s => {
+if (s.projectTitle) {
+const p = projects.find(x => x.title === s.projectTitle);
+if (p && projectMap[p.id]) projectMap[p.id].sessions.push(s);
+}
+});
+const hasProjects = Object.values(projectMap).some(p => p.entries.length || p.sessions.length);
+const freeSessions = sessions.filter(s => !s.projectTitle);
+const hasFree = freeSessions.length > 0;
+
+const Divider = () => (
+<div style={{ width: “100%”, height: 1, background: “linear-gradient(to right, transparent, #c8b898, transparent)”, margin: “22px 0” }} />
+);
+
+return (
+<div style={{ background: “#f8f3ea”, fontFamily: “‘Cormorant Garamond’, Georgia, serif”, color: C.ink, padding: “36px 28px 44px” }}>
+<div style={{ textAlign: “center”, marginBottom: 30 }}>
+<div style={{ fontSize: 11, letterSpacing: “0.32em”, color: C.faint, textTransform: “uppercase”, marginBottom: 10 }}>功课</div>
+<div style={{ fontSize: 15, color: C.mid, fontStyle: “italic” }}>{dateStr}</div>
+<div style={{ width: 36, height: 1, background: C.rule, margin: “16px auto 0” }} />
+</div>
+
+```
+  {hasSenses && (
+    <div>
+      <div style={{ fontSize: 9, letterSpacing: "0.28em", color: C.faint, textTransform: "uppercase", textAlign: "center", marginBottom: 18 }}>感知 · Noticing</div>
+      {SENSES.map(s => {
+        const entries = senseLog[s]?.filter(e => e.text) || [];
+        if (!entries.length) return null;
+        return (
+          <div key={s} style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+              <span style={{ fontSize: 14, fontFamily: "'Noto Serif SC', serif" }}>{SENSE_ZH[s]}</span>
+              <span style={{ fontSize: 9, letterSpacing: "0.16em", color: C.faint, textTransform: "uppercase" }}>{s}</span>
+            </div>
+            {entries.map((e, i) => (
+              <div key={i} style={{ paddingLeft: 12, borderLeft: `1px solid ${C.rule}`, marginBottom: 8 }}>
+                <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.75 }}>{e.text}</div>
+                {e.location && <div style={{ fontSize: 11, color: C.faint, fontStyle: "italic", marginTop: 2 }}>{e.location}</div>}
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  {hasProjects && (
+    <React.Fragment>
+      {hasSenses && <Divider />}
+      <div style={{ fontSize: 9, letterSpacing: "0.28em", color: C.faint, textTransform: "uppercase", textAlign: "center", marginBottom: 20 }}>进行中 · Projects</div>
+      {Object.values(projectMap).map(({ project: p, entries, sessions: ps }) => {
+        if (!entries.length && !ps.length) return null;
+        const ag = getAgeStyle(p.createdAt, p.expiresAt);
+        return (
+          <div key={p.id} style={{ marginBottom: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: ag.accent, flexShrink: 0 }} />
+              <div style={{ fontSize: 16, fontFamily: "'Noto Serif SC', serif", color: ag.accent }}>{p.title}</div>
+              <div style={{ flex: 1, height: 1, background: ag.border }} />
+            </div>
+            {entries.map((e, i) => (
+              <div key={i} style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 10, color: C.faint, marginBottom: 5, paddingLeft: 16 }}>{e.savedAt}</div>
+                <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.85, whiteSpace: "pre-wrap", paddingLeft: 16 }}>{e.text}</div>
+              </div>
+            ))}
+            {ps.map(s => (
+              <div key={s.id} style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 10, color: C.faint, paddingLeft: 16, marginBottom: 5, display: "flex", gap: 8 }}>
+                  <span style={{ fontStyle: "italic" }}>{s.exerciseTitle}</span>
+                  <span>·</span><span>{s.savedAt}</span><span>·</span><span>{fmt(s.duration)}</span>
+                </div>
+                <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.85, whiteSpace: "pre-wrap", paddingLeft: 16 }}>{s.text}</div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </React.Fragment>
+  )}
+
+  {hasFree && (
+    <React.Fragment>
+      {(hasSenses || hasProjects) && <Divider />}
+      <div style={{ fontSize: 9, letterSpacing: "0.28em", color: C.faint, textTransform: "uppercase", textAlign: "center", marginBottom: 20 }}>练习 · Practice</div>
+      {freeSessions.map(s => (
+        <div key={s.id} style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
+            <span style={{ fontSize: 15, fontStyle: "italic" }}>{s.exerciseTitle}</span>
+            {s.author && <span style={{ fontSize: 10, color: C.faint }}>— {s.author}</span>}
+          </div>
+          <div style={{ fontSize: 10, color: C.faint, marginBottom: 8, display: "flex", gap: 8 }}>
+            <span>{s.savedAt}</span><span>·</span><span>{fmt(s.duration)}</span>
+          </div>
+          <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.85, whiteSpace: "pre-wrap", borderLeft: `1px solid ${C.rule}`, paddingLeft: 14 }}>{s.text}</div>
+        </div>
+      ))}
+    </React.Fragment>
+  )}
+
+  <div style={{ textAlign: "center", marginTop: 36 }}>
+    <div style={{ width: 24, height: 1, background: C.rule, margin: "0 auto 10px" }} />
+    <div style={{ fontSize: 9, letterSpacing: "0.3em", color: C.faint, textTransform: "uppercase" }}>功课</div>
+  </div>
+</div>
+```
+
+);
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────
+
+function Gongke() {
+const [senseLog, setSenseLog] = React.useState(() => {
+try { return JSON.parse(localStorage.getItem(“gk_sense”)) || EMPTY_SENSE; }
+catch { return EMPTY_SENSE; }
+});
+const [projects, setProjects] = React.useState(() => {
+try { return JSON.parse(localStorage.getItem(“gk_projects”)) || []; }
+catch { return []; }
+});
+const [sessions, setSessions] = React.useState(() => {
+try { return JSON.parse(localStorage.getItem(“gk_sessions”)) || []; }
+catch { return []; }
+});
+const [projectEntries, setProjectEntries] = React.useState(() => {
+try { return JSON.parse(localStorage.getItem(“gk_pentries”)) || {}; }
+catch { return {}; }
+});
+const [projectDrafts, setProjectDrafts] = React.useState({});
+
+const [selectedTime, setSelectedTime] = React.useState(null);
+const [exercise, setExercise] = React.useState(null);
+const [practiceText, setPracticeText] = React.useState(””);
+const [activeProject, setActiveProject] = React.useState(null);
+const [timerSec, setTimerSec] = React.useState(0);
+const [timerOn, setTimerOn] = React.useState(false);
+const [showForm, setShowForm] = React.useState(false);
+const [newTitle, setNewTitle] = React.useState(””);
+const [newDays, setNewDays] = React.useState(7);
+const [expandedProject, setExpandedProject] = React.useState(null);
+const [savedProjectIds, setSavedProjectIds] = React.useState({});
+const [savedSession, setSavedSession] = React.useState(false);
+const [showExport, setShowExport] = React.useState(false);
+const [exportMode, setExportMode] = React.useState(“preview”); // “preview” | “image” | “text”
+const [exportImg, setExportImg] = React.useState(null);
+const [generating, setGenerating] = React.useState(false);
+const [copied, setCopied] = React.useState(false);
+const [showNewDay, setShowNewDay] = React.useState(false);
+const timerRef = React.useRef(null);
+const exportRef = React.useRef(null);
+
+const todayStr = new Date().toLocaleDateString(“zh-CN”, { year: “numeric”, month: “long”, day: “numeric”, weekday: “long” });
+
+React.useEffect(() => { localStorage.setItem(“gk_sense”, JSON.stringify(senseLog)); }, [senseLog]);
+React.useEffect(() => {
+const alive = projects.filter(p => p.expiresAt > Date.now());
+if (alive.length !== projects.length) setProjects(alive);
+else localStorage.setItem(“gk_projects”, JSON.stringify(projects));
+}, [projects]);
+React.useEffect(() => { localStorage.setItem(“gk_sessions”, JSON.stringify(sessions)); }, [sessions]);
+React.useEffect(() => { localStorage.setItem(“gk_pentries”, JSON.stringify(projectEntries)); }, [projectEntries]);
+
+React.useEffect(() => {
+if (timerOn) timerRef.current = setInterval(() => setTimerSec(s => s + 1), 1000);
+else clearInterval(timerRef.current);
+return () => clearInterval(timerRef.current);
+}, [timerOn]);
+
+function startNewDay() {
+setSenseLog(EMPTY_SENSE);
+setSessions([]);
+setProjectEntries({});
+setProjectDrafts({});
+setSelectedTime(null); setExercise(null); setPracticeText(””);
+setTimerSec(0); setTimerOn(false); setActiveProject(null);
+setExpandedProject(null); setShowNewDay(false);
+localStorage.setItem(“gk_sense”, JSON.stringify(EMPTY_SENSE));
+localStorage.setItem(“gk_sessions”, JSON.stringify([]));
+localStorage.setItem(“gk_pentries”, JSON.stringify({}));
+}
+
+function pickTime(t) {
+setSelectedTime(t);
+const pool = EXERCISES[t];
+setExercise(pool[Math.floor(Math.random() * pool.length)]);
+setTimerSec(0); setTimerOn(true); setActiveProject(null); setPracticeText(””); setSavedSession(false);
+}
+
+function saveSession() {
+if (!practiceText.trim()) return;
+setSessions(prev => […prev, { id: Date.now(), exerciseTitle: exercise?.title || “”, author: exercise?.author || “”, projectTitle: activeProject?.title || “”, text: practiceText, duration: timerSec, savedAt: new Date().toLocaleTimeString(“zh-CN”, { hour: “2-digit”, minute: “2-digit” }) }]);
+setSavedSession(true); setTimerOn(false);
+setTimeout(() => { setPracticeText(””); setSelectedTime(null); setExercise(null); setTimerSec(0); setActiveProject(null); setSavedSession(false); }, 1200);
+}
+
+function saveProjectEntry(pid) {
+const draft = projectDrafts[pid]?.trim();
+if (!draft) return;
+setProjectEntries(prev => ({ …prev, [pid]: […(prev[pid] || []), { id: Date.now(), text: draft, savedAt: new Date().toLocaleTimeString(“zh-CN”, { hour: “2-digit”, minute: “2-digit” }) }] }));
+setProjectDrafts(prev => ({ …prev, [pid]: “” }));
+setSavedProjectIds(prev => ({ …prev, [pid]: true }));
+setTimeout(() => setSavedProjectIds(prev => ({ …prev, [pid]: false })), 1400);
+}
+
+function addEntry(sense) {
+setSenseLog(prev => ({ …prev, [sense]: […prev[sense], { id: Date.now(), text: “”, location: “” }] }));
+}
+function updateEntry(sense, id, field, val) {
+setSenseLog(prev => ({ …prev, [sense]: prev[sense].map(e => e.id === id ? { …e, [field]: val } : e) }));
+}
+function addProject() {
+if (!newTitle.trim()) return;
+setProjects(prev => […prev, { id: Date.now(), title: newTitle.trim(), createdAt: Date.now(), expiresAt: Date.now() + newDays * 86400000 }]);
+setNewTitle(””); setNewDays(7); setShowForm(false);
+}
+
+async function generateLongImage() {
+setGenerating(true); setExportImg(null); setExportMode(“image”);
+try {
+const h2c = await loadH2C();
+await new Promise(r => setTimeout(r, 300));
+const node = exportRef.current;
+const canvas = await h2c(node, {
+backgroundColor: “#f8f3ea”, scale: 2, useCORS: true, allowTaint: true, logging: false,
+width: node.offsetWidth, height: node.scrollHeight,
+});
+setExportImg(canvas.toDataURL(“image/png”));
+} catch(e) { console.error(e); setExportMode(“preview”); }
+setGenerating(false);
+}
+
+function doCopy() {
+const text = buildText(senseLog, projects, sessions, projectEntries);
+if (navigator.clipboard) {
+navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+} else {
+const ta = document.createElement(“textarea”);
+ta.value = text; ta.style.position = “fixed”; ta.style.opacity = “0”;
+document.body.appendChild(ta); ta.select(); document.execCommand(“copy”);
+document.body.removeChild(ta);
+setCopied(true); setTimeout(() => setCopied(false), 2000);
+}
+}
+
+const tabBtn = (mode, label) => (
+<button onClick={() => { setExportMode(mode); if (mode !== “image”) setExportImg(null); }}
+style={{ flex: 1, background: exportMode === mode ? C.accent : “transparent”, border: `1px solid ${exportMode === mode ? C.accent : C.rule}`, borderRadius: 4, padding: “8px 0”, fontSize: 11, color: exportMode === mode ? C.bg : C.faint, cursor: “pointer”, letterSpacing: “0.06em” }}>
+{label}
+</button>
+);
+
+return (
+<div style={{ fontFamily: “‘Cormorant Garamond’, Georgia, serif”, color: C.ink, background: C.bg, minHeight: “100vh”, maxWidth: 480, margin: “0 auto”, paddingBottom: 80 }}>
+
+```
+  {/* HEADER */}
+  <div style={{ padding: "44px 24px 20px", borderBottom: `1px solid ${C.rule}` }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <div>
+        <div style={{ fontSize: 52, fontFamily: "'Noto Serif SC', serif", fontWeight: 300, letterSpacing: "0.06em", lineHeight: 1 }}>功课</div>
+        <div style={{ fontSize: 13, color: C.faint, marginTop: 8, fontStyle: "italic", letterSpacing: "0.06em" }}>{todayStr}</div>
+      </div>
+      <button onClick={() => setShowNewDay(true)}
+        style={{ background: "none", border: `1px solid ${C.rule}`, borderRadius: 6, padding: "8px 14px", fontSize: 12, color: C.faint, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", marginTop: 6, letterSpacing: "0.06em", lineHeight: 1.4 }}>
+        新的<br/>一天
+      </button>
+    </div>
+  </div>
+
+  {/* ZONE 1 */}
+  <div style={{ padding: "24px 24px 28px", borderBottom: `1px solid ${C.rule}` }}>
+    <div style={sLabel}>感知 · Noticing</div>
+    <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6 }}>
+      {SENSES.map(s => (
+        <div key={s} style={{ minWidth: 138, flex: "0 0 138px" }}>
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ fontSize: 17, fontFamily: "'Noto Serif SC', serif" }}>{SENSE_ZH[s]}</div>
+            <div style={{ fontSize: 10, color: C.faint, letterSpacing: "0.14em", textTransform: "uppercase" }}>{s}</div>
+          </div>
+          {senseLog[s].map(entry => (
+            <div key={entry.id} style={{ marginBottom: 8 }}>
+              <textarea value={entry.text} onChange={e => updateEntry(s, entry.id, "text", e.target.value)} placeholder="noticed…" rows={3}
+                style={{ ...inp, width: "100%", background: C.card, border: `1px solid ${C.rule}`, borderRadius: 4, padding: "6px 8px", fontSize: 13, resize: "none", lineHeight: 1.6 }} />
+              <input value={entry.location} onChange={e => updateEntry(s, entry.id, "location", e.target.value)} placeholder="where"
+                style={{ ...inp, width: "100%", borderBottom: `1px solid ${C.rule}`, padding: "2px 0", fontSize: 11, color: C.faint, fontStyle: "italic" }} />
+            </div>
+          ))}
+          <button onClick={() => addEntry(s)} style={{ width: "100%", background: "none", border: `1px dashed ${C.rule}`, borderRadius: 4, color: C.faint, fontSize: 18, padding: "3px 0", cursor: "pointer" }}>+</button>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* ZONE 2 */}
+  <div style={{ padding: "24px 24px 28px", borderBottom: `1px solid ${C.rule}` }}>
+    <div style={sLabel}>进行中 · Projects</div>
+    <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6, alignItems: "flex-start" }}>
+      {projects.map(p => {
+        const ag = getAgeStyle(p.createdAt, p.expiresAt);
+        const daysLeft = Math.ceil((p.expiresAt - Date.now()) / 86400000);
+        const isOpen = expandedProject === p.id;
+        const entryCount = (projectEntries[p.id] || []).length;
+        return (
+          <div key={p.id} onClick={() => setExpandedProject(isOpen ? null : p.id)}
+            style={{ minWidth: 118, flex: "0 0 118px", background: ag.bg, border: `1px solid ${isOpen ? ag.accent : ag.border}`, borderRadius: 6, padding: "12px 10px", cursor: "pointer", animation: ag.pulse ? "pulse 2s ease-in-out infinite" : "none", transition: "border-color 0.2s" }}>
+            <div style={{ fontSize: 13, fontFamily: "'Noto Serif SC', serif", color: ag.accent, lineHeight: 1.4, marginBottom: 6, wordBreak: "break-all" }}>{p.title}</div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ fontSize: 10, color: ag.accent, opacity: 0.65 }}>{daysLeft}d left</div>
+              {entryCount > 0 && <div style={{ fontSize: 10, color: ag.accent, opacity: 0.55 }}>{entryCount} notes</div>}
+            </div>
+          </div>
+        );
+      })}
+      <button onClick={() => setShowForm(true)} style={{ minWidth: 80, flex: "0 0 80px", background: "transparent", border: `1px dashed ${C.rule}`, borderRadius: 6, padding: "12px 8px", color: C.faint, fontSize: 12, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", lineHeight: 1.5 }}>+ 新项目</button>
+    </div>
+
+    {expandedProject && (() => {
+      const p = projects.find(x => x.id === expandedProject);
+      if (!p) return null;
+      const ag = getAgeStyle(p.createdAt, p.expiresAt);
+      const isSaved = savedProjectIds[p.id];
+      const entries = projectEntries[p.id] || [];
+      const draft = projectDrafts[p.id] || "";
+      return (
+        <div style={{ marginTop: 14, background: C.card, border: `1px solid ${ag.border}`, borderRadius: 8, overflow: "hidden" }}>
+          {entries.length > 0 && (
+            <div style={{ borderBottom: `1px solid ${C.rule}`, padding: "14px 18px", maxHeight: 180, overflowY: "auto" }}>
+              <div style={{ fontSize: 9, letterSpacing: "0.2em", color: C.faint, textTransform: "uppercase", marginBottom: 10 }}>今日已写</div>
+              {entries.map((e, i) => (
+                <div key={e.id} style={{ marginBottom: i < entries.length - 1 ? 12 : 0 }}>
+                  <div style={{ fontSize: 10, color: C.faint, marginBottom: 3 }}>{e.savedAt}</div>
+                  <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.7, whiteSpace: "pre-wrap", opacity: 0.85 }}>
+                    {e.text.length > 100 ? e.text.slice(0, 100) + "…" : e.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ padding: 18 }}>
+            <div style={{ fontSize: 10, color: C.faint, letterSpacing: "0.14em", marginBottom: 10, fontStyle: "italic" }}>
+              {entries.length > 0 ? "继续写 —" : p.title}
+            </div>
+            <textarea value={draft} onChange={e => setProjectDrafts(prev => ({ ...prev, [p.id]: e.target.value }))}
+              placeholder="write here…" rows={6}
+              style={{ ...inp, width: "100%", fontSize: 15, lineHeight: 1.85, resize: "vertical", borderBottom: `1px solid ${C.rule}`, paddingBottom: 12, marginBottom: 12 }} />
+            <button onClick={() => saveProjectEntry(p.id)} style={{ background: isSaved ? "#3d5a38" : C.accent, color: C.bg, border: "none", borderRadius: 4, padding: "8px 22px", fontSize: 13, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", transition: "background 0.3s" }}>
+              {isSaved ? "✓ 已保存" : "保存"}
+            </button>
+          </div>
+        </div>
+      );
+    })()}
+
+    {showForm && (
+      <div style={{ marginTop: 16, background: C.card, border: `1px solid ${C.rule}`, borderRadius: 8, padding: 18 }}>
+        <input autoFocus value={newTitle} onChange={e => setNewTitle(e.target.value)} onKeyDown={e => e.key === "Enter" && addProject()} placeholder="项目名称"
+          style={{ ...inp, width: "100%", borderBottom: `1px solid ${C.rule}`, padding: "6px 0", fontSize: 17, fontFamily: "'Noto Serif SC', serif", marginBottom: 14 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+          <span style={{ fontSize: 11, color: C.faint, fontStyle: "italic" }}>到期</span>
+          {[3, 7, 14].map(d => (
+            <button key={d} onClick={() => setNewDays(d)} style={{ background: newDays === d ? C.accent : "transparent", border: `1px solid ${newDays === d ? C.accent : C.rule}`, borderRadius: 4, padding: "4px 12px", fontSize: 12, color: newDays === d ? C.bg : C.faint, cursor: "pointer" }}>{d}天</button>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={addProject} style={{ background: C.accent, color: C.bg, border: "none", borderRadius: 4, padding: "8px 22px", fontSize: 13, cursor: "pointer", fontFamily: "'Noto Serif SC', serif" }}>添加</button>
+          <button onClick={() => setShowForm(false)} style={{ background: "transparent", color: C.faint, border: `1px solid ${C.rule}`, borderRadius: 4, padding: "8px 16px", fontSize: 13, cursor: "pointer" }}>取消</button>
+        </div>
+      </div>
+    )}
+  </div>
+
+  {/* ZONE 3 */}
+  <div style={{ padding: "24px 24px 28px", borderBottom: `1px solid ${C.rule}` }}>
+    <div style={{ ...sLabel, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <span>练习 · Practice</span>
+      {sessions.length > 0 && <span style={{ fontSize: 11, fontStyle: "italic" }}>{sessions.length} saved today</span>}
+    </div>
+    <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+      {[2, 10, 60].map(t => (
+        <button key={t} onClick={() => pickTime(t)} style={{ flex: 1, background: selectedTime === t ? C.accent : "transparent", border: `1px solid ${selectedTime === t ? C.accent : C.rule}`, borderRadius: 6, padding: "14px 4px", cursor: "pointer", lineHeight: 1.2 }}>
+          <div style={{ fontSize: 30, color: selectedTime === t ? C.bg : C.mid, fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}>{t}</div>
+          <div style={{ fontSize: 10, color: selectedTime === t ? "rgba(244,239,229,0.6)" : C.faint, letterSpacing: "0.14em", textTransform: "uppercase" }}>min</div>
+        </button>
+      ))}
+    </div>
+
+    {exercise && (
+      <div style={{ background: C.card, border: `1px solid ${C.rule}`, borderRadius: 8, padding: 20 }}>
+        <div style={{ fontSize: 10, letterSpacing: "0.2em", color: C.faint, textTransform: "uppercase", marginBottom: 4 }}>{exercise.author}</div>
+        <div style={{ fontSize: 21, fontStyle: "italic", color: C.ink, marginBottom: 12 }}>{exercise.title}</div>
+        <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.75, borderLeft: `2px solid ${C.rule}`, paddingLeft: 14, marginBottom: 18 }}>{exercise.instruction}</div>
+        {projects.length > 0 && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 10, color: C.faint, fontStyle: "italic", letterSpacing: "0.14em", marginBottom: 8 }}>or work on —</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {projects.map(p => (
+                <button key={p.id} onClick={() => setActiveProject(activeProject?.id === p.id ? null : p)}
+                  style={{ background: activeProject?.id === p.id ? C.accent : "transparent", border: `1px solid ${activeProject?.id === p.id ? C.accent : C.rule}`, borderRadius: 4, padding: "4px 12px", fontSize: 12, color: activeProject?.id === p.id ? C.bg : C.mid, cursor: "pointer", fontFamily: "'Noto Serif SC', serif" }}>{p.title}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+          <span style={{ fontSize: 26, fontVariantNumeric: "tabular-nums", color: C.ink }}>{fmt(timerSec)}</span>
+          <button onClick={() => setTimerOn(v => !v)} style={{ background: "none", border: "none", color: C.faint, fontSize: 12, cursor: "pointer", fontStyle: "italic" }}>{timerOn ? "pause" : "resume"}</button>
+          <button onClick={() => { setTimerSec(0); setTimerOn(false); }} style={{ background: "none", border: "none", color: C.faint, fontSize: 11, cursor: "pointer", fontStyle: "italic" }}>reset</button>
+        </div>
+        <textarea value={practiceText} onChange={e => setPracticeText(e.target.value)} placeholder="begin here…"
+          style={{ ...inp, width: "100%", minHeight: 200, borderTop: `1px solid ${C.rule}`, paddingTop: 16, fontSize: 16, lineHeight: 1.85, resize: "vertical" }} />
+        <div style={{ marginTop: 14, display: "flex", gap: 10, alignItems: "center" }}>
+          <button onClick={saveSession} style={{ background: savedSession ? "#3d5a38" : C.accent, color: C.bg, border: "none", borderRadius: 4, padding: "10px 28px", fontSize: 13, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", transition: "background 0.3s" }}>
+            {savedSession ? "✓ 已保存" : "保存练习"}
+          </button>
+          <span style={{ fontSize: 11, color: C.faint, fontStyle: "italic" }}>保存后可再开新练习</span>
+        </div>
+      </div>
+    )}
+
+    {sessions.length > 0 && (
+      <div style={{ marginTop: 20 }}>
+        <div style={{ ...sLabel, marginBottom: 12 }}>今日已保存</div>
+        {sessions.map(s => (
+          <div key={s.id} style={{ borderLeft: `2px solid ${C.rule}`, paddingLeft: 14, marginBottom: 14 }}>
+            <div style={{ fontSize: 11, color: C.faint, marginBottom: 4 }}>{s.savedAt} · {s.exerciseTitle}{s.projectTitle ? ` · ${s.projectTitle}` : ""} · {fmt(s.duration)}</div>
+            <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{s.text.slice(0, 120)}{s.text.length > 120 ? "…" : ""}</div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  {/* FOOTER */}
+  <div style={{ padding: 24 }}>
+    <button onClick={() => { setShowExport(true); setExportMode("preview"); setExportImg(null); }}
+      style={{ width: "100%", background: C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "16px 0", fontSize: 14, cursor: "pointer", letterSpacing: "0.12em", fontFamily: "'Cormorant Garamond', serif" }}>
+      导出今日 · Export Today
+    </button>
+  </div>
+
+  {/* NEW DAY CONFIRM */}
+  {showNewDay && (
+    <div onClick={() => setShowNewDay(false)}
+      style={{ position: "fixed", inset: 0, background: "rgba(30,24,16,0.72)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div onClick={e => e.stopPropagation()}
+        style={{ background: C.bg, borderRadius: 16, padding: "36px 32px", maxWidth: 320, width: "90%", textAlign: "center" }}>
+        <div style={{ fontSize: 28, fontFamily: "'Noto Serif SC', serif", marginBottom: 12 }}>新的一天</div>
+        <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.75, marginBottom: 28 }}>
+          感知日志、练习记录和项目笔记将全部清空。<br/>
+          项目卡片会保留。<br/><br/>
+          <span style={{ fontStyle: "italic", color: C.faint }}>建议先导出今日存档。</span>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => setShowNewDay(false)}
+            style={{ flex: 1, background: "transparent", border: `1px solid ${C.rule}`, borderRadius: 6, padding: "12px 0", fontSize: 13, color: C.faint, cursor: "pointer" }}>取消</button>
+          <button onClick={startNewDay}
+            style={{ flex: 1, background: C.accent, border: "none", borderRadius: 6, padding: "12px 0", fontSize: 13, color: C.bg, cursor: "pointer", fontFamily: "'Noto Serif SC', serif" }}>确认开始</button>
+        </div>
+      </div>
+    </div>
+  )}
+
+  {/* EXPORT MODAL */}
+  {showExport && (
+    <div onClick={e => { if (e.target === e.currentTarget) setShowExport(false); }}
+      style={{ position: "fixed", inset: 0, background: "rgba(30,24,16,0.78)", zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+      <div style={{ background: C.bg, borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 480, maxHeight: "92vh", display: "flex", flexDirection: "column" }}>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px 8px", flexShrink: 0 }}>
+          <div style={{ fontSize: 13, fontFamily: "'Noto Serif SC', serif" }}>今日存档</div>
+          <button onClick={() => setShowExport(false)} style={{ background: "none", border: "none", color: C.faint, fontSize: 22, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>
+        </div>
+
+        {/* Three tabs */}
+        <div style={{ display: "flex", gap: 6, padding: "0 24px 16px", flexShrink: 0 }}>
+          {tabBtn("preview", "预览")}
+          {tabBtn("image", generating ? "生成中…" : "长图")}
+          {tabBtn("text", "复制文本")}
+        </div>
+
+        <div style={{ overflowY: "auto", flex: 1, padding: "0 16px 8px" }}>
+
+          {/* Visual preview — always rendered for html2canvas, hidden in text mode */}
+          <div ref={exportRef} style={{ border: `1px solid ${C.rule}`, borderRadius: 12, overflow: "hidden", display: exportMode === "text" ? "none" : (exportImg && exportMode === "image" ? "none" : "block") }}>
+            <ExportView senseLog={senseLog} projects={projects} sessions={sessions} projectEntries={projectEntries} />
+          </div>
+
+          {/* Long image */}
+          {exportMode === "image" && exportImg && (
+            <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${C.rule}` }}>
+              <img src={exportImg} alt="今日存档" style={{ width: "100%", display: "block" }} />
+            </div>
+          )}
+
+          {/* Plain text copy */}
+          {exportMode === "text" && (
+            <div style={{ border: `1px solid ${C.rule}`, borderRadius: 12, overflow: "hidden" }}>
+              <textarea readOnly value={buildText(senseLog, projects, sessions, projectEntries)}
+                style={{ width: "100%", minHeight: 320, background: "#f8f3ea", border: "none", padding: "24px 20px", fontSize: 13, lineHeight: 1.8, color: C.mid, fontFamily: "monospace", resize: "none", outline: "none" }} />
+            </div>
+          )}
+        </div>
+
+        {/* Bottom action */}
+        <div style={{ padding: "12px 24px 32px", flexShrink: 0 }}>
+          {exportMode === "preview" && (
+            <button onClick={() => { setExportMode("image"); generateLongImage(); }}
+              style={{ width: "100%", background: C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "14px 0", fontSize: 13, cursor: "pointer", letterSpacing: "0.1em", fontFamily: "'Cormorant Garamond', serif" }}>
+              生成长图
+            </button>
+          )}
+          {exportMode === "image" && !exportImg && !generating && (
+            <button onClick={generateLongImage}
+              style={{ width: "100%", background: C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "14px 0", fontSize: 13, cursor: "pointer", letterSpacing: "0.1em", fontFamily: "'Cormorant Garamond', serif" }}>
+              生成长图
+            </button>
+          )}
+          {exportMode === "image" && exportImg && (
+            <div style={{ textAlign: "center", fontSize: 11, color: C.faint, fontStyle: "italic" }}>长按图片 → 存储到相册</div>
+          )}
+          {exportMode === "text" && (
+            <button onClick={doCopy}
+              style={{ width: "100%", background: copied ? "#3d5a38" : C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "14px 0", fontSize: 13, cursor: "pointer", letterSpacing: "0.1em", fontFamily: "'Cormorant Garamond', serif", transition: "background 0.3s" }}>
+              {copied ? "✓ 已复制" : "复制全文"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+```
+
+);
+}
+
+ReactDOM.createRoot(document.getElementById(“root”)).render(<Gongke />);
+</script>
+
+</body>
+</html>
