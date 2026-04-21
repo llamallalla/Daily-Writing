@@ -44,7 +44,7 @@ button{cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;-webkit-app
 .pwrite{padding:18px;}
 .pwrite-lbl{font-size:10px;color:#8a7860;font-style:italic;margin-bottom:10px;}
 .pwrite textarea{width:100%;font-size:15px;line-height:1.85;resize:vertical;border-bottom:1px solid #d8cebc;padding-bottom:12px;margin-bottom:12px;min-height:120px;}
-.psave-btn{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;font-family:‘Noto Serif SC’,serif;transition:background .3s;}
+.psave-btn{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;transition:background .3s;}
 #pform{margin-top:14px;background:rgba(255,255,255,.52);border:1px solid #d8cebc;border-radius:8px;padding:18px;display:none;}
 #pform input{width:100%;border-bottom:1px solid #d8cebc;padding:6px 0;font-size:17px;font-family:‘Noto Serif SC’,serif;margin-bottom:14px;}
 .days-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
@@ -52,7 +52,7 @@ button{cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;-webkit-app
 .dopt{border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;color:#8a7860;background:transparent;}
 .dopt.on{background:#2a2018;border-color:#2a2018;color:#f4efe5;}
 .fbtns{display:flex;gap:8px;}
-.fprimary{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;font-family:‘Noto Serif SC’,serif;}
+.fprimary{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;}
 .fcancel{background:transparent;color:#8a7860;border:1px solid #d8cebc;border-radius:4px;padding:8px 16px;font-size:13px;}
 
 #tbrow{display:flex;gap:10px;margin-bottom:20px;}
@@ -69,14 +69,14 @@ button{cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;-webkit-app
 #ptags-wrap{margin-bottom:16px;display:none;}
 .ptag-lbl{font-size:10px;color:#8a7860;font-style:italic;margin-bottom:8px;}
 #ptags-row{display:flex;flex-wrap:wrap;gap:6px;}
-.ptag{border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;color:#4a3c28;background:transparent;font-family:‘Noto Serif SC’,serif;}
+.ptag{border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;color:#4a3c28;background:transparent;}
 .ptag.on{background:#2a2018;border-color:#2a2018;color:#f4efe5;}
 .trow{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
 #tdisplay{font-size:26px;font-variant-numeric:tabular-nums;}
 .tctrl{background:none;border:none;color:#8a7860;font-size:12px;font-style:italic;}
 #ptext{width:100%;min-height:200px;border-top:1px solid #d8cebc;padding-top:16px;font-size:16px;line-height:1.85;resize:vertical;}
 .srow{margin-top:14px;display:flex;gap:10px;align-items:center;}
-#psave{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:10px 28px;font-size:13px;font-family:‘Noto Serif SC’,serif;transition:background .3s;}
+#psave{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:10px 28px;font-size:13px;transition:background .3s;}
 .shint{font-size:11px;color:#8a7860;font-style:italic;}
 #sess-list-wrap{margin-top:20px;display:none;}
 .sess-item{border-left:2px solid #d8cebc;padding-left:14px;margin-bottom:14px;}
@@ -88,49 +88,43 @@ button{cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;-webkit-app
 
 /* MODALS */
 .overlay{position:fixed;inset:0;background:rgba(30,24,16,.75);z-index:100;display:none;align-items:center;justify-content:center;}
-.overlay.bot{align-items:flex-end;justify-content:center;}
 .modal{background:#f4efe5;border-radius:16px;padding:36px 32px;max-width:320px;width:90%;text-align:center;}
 .modal-ttl{font-size:28px;font-family:‘Noto Serif SC’,serif;margin-bottom:12px;}
 .modal-body{font-size:14px;color:#4a3c28;line-height:1.75;margin-bottom:28px;}
 .modal-note{font-style:italic;color:#8a7860;}
 .mbtns{display:flex;gap:10px;}
 .mcancel{flex:1;background:transparent;border:1px solid #d8cebc;border-radius:6px;padding:12px 0;font-size:13px;color:#8a7860;}
-.mconfirm{flex:1;background:#2a2018;border:none;border-radius:6px;padding:12px 0;font-size:13px;color:#f4efe5;font-family:‘Noto Serif SC’,serif;}
+.mconfirm{flex:1;background:#2a2018;border:none;border-radius:6px;padding:12px 0;font-size:13px;color:#f4efe5;}
 
-/* EXPORT — full screen for easy screenshot */
-#emodal{position:fixed;inset:0;background:#f8f3ea;z-index:100;display:none;flex-direction:column;}
-#emodal-hdr{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 0;flex-shrink:0;border-bottom:1px solid #d8cebc;padding-bottom:16px;}
+/* EXPORT SHEET */
+.overlay.bot{align-items:flex-end;justify-content:center;}
+#esheet{background:#f4efe5;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92vh;display:flex;flex-direction:column;}
+.shdr{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 0;flex-shrink:0;}
 .sttl{font-size:13px;font-family:‘Noto Serif SC’,serif;}
 .sclose{background:none;border:none;color:#8a7860;font-size:24px;line-height:1;padding:0;}
-.stabs{display:flex;gap:6px;padding:16px 24px 0;flex-shrink:0;}
+.stabs{display:flex;gap:6px;padding:16px 24px;flex-shrink:0;}
 .stab{flex:1;border:1px solid #d8cebc;border-radius:4px;padding:8px 0;font-size:11px;color:#8a7860;background:transparent;}
 .stab.on{background:#2a2018;border-color:#2a2018;color:#f4efe5;}
-
-/* PREVIEW TAB — scrollable card, screenshot this */
-#tab-prev{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding:16px;}
-#ecard{background:#f8f3ea;font-family:‘Cormorant Garamond’,Georgia,serif;color:#1e1810;padding:36px 24px 52px;border:1px solid #d8cebc;border-radius:12px;}
-
-/* TEXT TAB */
-#tab-txt{flex:1;overflow-y:auto;display:none;padding:16px;}
-#etextbox{width:100%;height:100%;min-height:400px;background:#fff;border:1px solid #d8cebc;border-radius:12px;padding:20px;font-size:13px;line-height:1.8;color:#4a3c28;font-family:monospace;resize:none;}
-#tab-txt-footer{padding:16px 24px 32px;flex-shrink:0;display:none;}
-#copybtn{width:100%;background:#2a2018;color:#f4efe5;border:none;border-radius:6px;padding:14px 0;font-size:13px;letter-spacing:.1em;transition:background .3s;}
-#copybtn.done{background:#3d5a38;}
-
-/* preview footer hint */
-#tab-prev-footer{padding:12px 24px 32px;flex-shrink:0;text-align:center;display:none;}
+.sbody{overflow-y:auto;flex:1;padding:0 16px 8px;-webkit-overflow-scrolling:touch;}
+.sftr{padding:12px 24px 32px;flex-shrink:0;text-align:center;}
+.sact{width:100%;background:#2a2018;color:#f4efe5;border:none;border-radius:6px;padding:14px 0;font-size:13px;letter-spacing:.1em;transition:background .3s;}
+.sact.done{background:#3d5a38;}
 .sftr-hint{font-size:11px;color:#8a7860;font-style:italic;}
 
-/* EXPORT CARD STYLES */
-.ec-top{text-align:center;margin-bottom:30px;}
-.ec-badge{font-size:11px;letter-spacing:.32em;color:#8a7860;text-transform:uppercase;margin-bottom:10px;}
-.ec-date{font-size:15px;color:#4a3c28;font-style:italic;}
-.ec-rule{width:36px;height:1px;background:#d8cebc;margin:16px auto 0;}
-.ec-slbl{font-size:9px;letter-spacing:.28em;color:#8a7860;text-transform:uppercase;text-align:center;margin-bottom:18px;}
-.ec-div{width:100%;height:1px;background:linear-gradient(to right,transparent,#c8b898,transparent);margin:22px 0;}
-.ec-ft{text-align:center;margin-top:36px;}
-.ec-ftrule{width:24px;height:1px;background:#d8cebc;margin:0 auto 10px;}
-.ec-ftmark{font-size:9px;letter-spacing:.3em;color:#8a7860;text-transform:uppercase;}
+/* EXPORT CARD — system fonts ONLY so html2canvas works */
+#ecard-wrap{border:1px solid #d8cebc;border-radius:12px;overflow:hidden;}
+#ecard{
+background:#f8f3ea;
+/* NO web fonts — Georgia + system serif only */
+font-family:Georgia,‘Songti SC’,‘STSong’,‘SimSun’,serif;
+color:#1e1810;
+padding:40px 28px 52px;
+width:100%;
+}
+
+#eimgwrap{border-radius:12px;overflow:hidden;border:1px solid #d8cebc;display:none;}
+#eimgwrap img{width:100%;display:block;}
+#etextbox{width:100%;min-height:320px;background:#f8f3ea;border:1px solid #d8cebc;border-radius:12px;padding:20px;font-size:13px;line-height:1.8;color:#4a3c28;font-family:monospace;resize:none;}
 </style>
 
 </head>
@@ -220,30 +214,35 @@ button{cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;-webkit-app
   </div>
 </div>
 
-<!-- EXPORT — full screen -->
+<!-- EXPORT SHEET -->
 
-<div id="emodal">
-  <div id="emodal-hdr">
-    <div class="sttl">今日存档</div>
-    <button class="sclose" id="eclose">×</button>
-  </div>
-  <div class="stabs">
-    <button class="stab on" data-tab="prev">截图存档</button>
-    <button class="stab" data-tab="txt">复制文本</button>
-  </div>
-  <!-- PREVIEW -->
-  <div id="tab-prev">
-    <div id="ecard"></div>
-  </div>
-  <div id="tab-prev-footer">
-    <div class="sftr-hint">滚动查看全文 · 截图保存</div>
-  </div>
-  <!-- TEXT -->
-  <div id="tab-txt">
-    <textarea id="etextbox" readonly></textarea>
-  </div>
-  <div id="tab-txt-footer">
-    <button id="copybtn">复制全文</button>
+<div class="overlay bot" id="emodal">
+  <div id="esheet">
+    <div class="shdr">
+      <div class="sttl">今日存档</div>
+      <button class="sclose" id="eclose">×</button>
+    </div>
+    <div class="stabs">
+      <button class="stab on" data-tab="prev">预览</button>
+      <button class="stab" data-tab="img">长图</button>
+      <button class="stab" data-tab="txt">复制文本</button>
+    </div>
+    <div class="sbody" id="sbody">
+      <div id="tab-prev">
+        <div id="ecard-wrap"><div id="ecard"></div></div>
+      </div>
+      <div id="tab-img" style="display:none;">
+        <div id="eimgph" style="text-align:center;padding:40px 0;color:#8a7860;font-style:italic;font-size:14px;">点击下方按钮生成长图</div>
+        <div id="eimgwrap"><img id="eimg" src="" alt="今日存档"/></div>
+      </div>
+      <div id="tab-txt" style="display:none;">
+        <textarea id="etextbox" readonly></textarea>
+      </div>
+    </div>
+    <div class="sftr">
+      <button class="sact" id="sact">生成长图</button>
+      <div class="sftr-hint" id="sftr-hint" style="display:none;"></div>
+    </div>
   </div>
 </div>
 
@@ -278,13 +277,14 @@ var pents=ld("gk_pe",{});
 var pdrafts={};
 var selTime=null,curEx=null,activePid=null,expandPid=null,selDays=3;
 var timerSec=0,timerOn=false,timerIv=null;
+var exportTab="prev",exportImgDone=false;
 
 function fmt(s){return Math.floor(s/60)+":"+("0"+s%60).slice(-2);}
 function ageStyle(ca,ea){
   var pct=Math.max(0,(ea-Date.now())/(ea-ca));
-  if(pct>.6)return{bg:"#dde8d8",br:"#9db89a",ac:"#3d5a38",pulse:false};
-  if(pct>.35)return{bg:"#ede8d0",br:"#c8b870",ac:"#5a4010",pulse:false};
-  if(pct>.12)return{bg:"#ede0c8",br:"#c88840",ac:"#5a2808",pulse:false};
+  if(pct>.6)return{bg:"#dde8d8",br:"#9db89a",ac:"#3d5a38"};
+  if(pct>.35)return{bg:"#ede8d0",br:"#c8b870",ac:"#5a4010"};
+  if(pct>.12)return{bg:"#ede0c8",br:"#c88840",ac:"#5a2808"};
   return{bg:"#edd8c8",br:"#c84830",ac:"#4a1008",pulse:true};
 }
 function purge(){projs=projs.filter(function(p){return p.ea>Date.now();});}
@@ -294,8 +294,7 @@ document.getElementById("date-str").textContent=new Date().toLocaleDateString("z
 
 // SENSE
 function renderSense(){
-  var sc=document.getElementById("sscroll");
-  sc.innerHTML="";
+  var sc=document.getElementById("sscroll");sc.innerHTML="";
   SENSES.forEach(function(s){
     var col=document.createElement("div");col.className="scol";
     var t=document.createElement("div");t.className="scol-title";t.textContent=SZH[s];
@@ -339,7 +338,7 @@ function renderProjs(){
     sc.appendChild(card);
   });
   var ab=document.createElement("button");
-  ab.style.cssText="min-width:80px;flex:0 0 80px;background:transparent;border:1px dashed #d8cebc;border-radius:6px;padding:12px 8px;color:#8a7860;font-size:12px;font-family:'Noto Serif SC',serif;line-height:1.5;cursor:pointer;";
+  ab.style.cssText="min-width:80px;flex:0 0 80px;background:transparent;border:1px dashed #d8cebc;border-radius:6px;padding:12px 8px;color:#8a7860;font-size:12px;line-height:1.5;cursor:pointer;";
   ab.textContent="+ 新项目";
   ab.onclick=function(){document.getElementById("pform").style.display="block";document.getElementById("pname").focus();};
   sc.appendChild(ab);
@@ -352,8 +351,7 @@ function renderExpand(){
   var p=null;for(var i=0;i<projs.length;i++){if(projs[i].id===expandPid){p=projs[i];break;}}
   if(!p){wrap.style.display="none";return;}
   var ag=ageStyle(p.ca,p.ea);
-  var entries=pents[p.id]||[];
-  var draft=pdrafts[p.id]||"";
+  var entries=pents[p.id]||[];var draft=pdrafts[p.id]||"";
   wrap.style.display="block";
   var box=document.createElement("div");box.className="pwrite-box";box.style.border="1px solid "+ag.br;
   if(entries.length>0){
@@ -412,7 +410,6 @@ function renderPTags(){
     row.appendChild(b);
   });
 }
-
 function pickEx(t){
   selTime=t;
   document.querySelectorAll(".tbtn").forEach(function(b){b.classList.toggle("on",parseInt(b.getAttribute("data-t"))===t);});
@@ -429,7 +426,6 @@ function pickEx(t){
   document.getElementById("psave").textContent="保存练习";document.getElementById("psave").style.background="#2a2018";
 }
 document.querySelectorAll(".tbtn").forEach(function(b){b.onclick=function(){pickEx(parseInt(b.getAttribute("data-t")));};});
-
 function updateTimer(){document.getElementById("tdisplay").textContent=fmt(timerSec);}
 document.getElementById("tpause").onclick=function(){
   timerOn=!timerOn;
@@ -482,8 +478,9 @@ document.getElementById("nd-ok").onclick=function(){
   renderSense();renderProjs();renderExpand();renderSessList();
 };
 
-// EXPORT
+// EXPORT — build card with SYSTEM FONTS ONLY (no web fonts = html2canvas works)
 function buildCard(){
+  var SF="Georgia,'Songti SC','STSong','SimSun',serif"; // system fonts only
   var dateStr=new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
   var hasSense=SENSES.some(function(s){return (slog[s]||[]).some(function(e){return e.text;});});
   var pm={};projs.forEach(function(p){pm[p.id]={p:p,ents:pents[p.id]||[],ss:[]};});
@@ -491,36 +488,78 @@ function buildCard(){
   var hasProj=false;for(var k in pm){if(pm[k].ents.length||pm[k].ss.length){hasProj=true;break;}}
   var freeSess=sess.filter(function(s){return !s.pt;});
 
-  var h='<div class="ec-top"><div class="ec-badge">功课</div><div class="ec-date">'+dateStr+'</div><div class="ec-rule"></div></div>';
+  var h='<div style="text-align:center;margin-bottom:30px">'
+       +'<div style="font-size:10px;letter-spacing:.3em;color:#8a7860;text-transform:uppercase;margin-bottom:10px;font-family:'+SF+'">功课</div>'
+       +'<div style="font-size:14px;color:#4a3c28;font-style:italic;font-family:'+SF+'">'+dateStr+'</div>'
+       +'<div style="width:36px;height:1px;background:#d8cebc;margin:14px auto 0"></div>'
+       +'</div>';
+
   if(hasSense){
-    h+='<div class="ec-slbl">感知 · Noticing</div>';
+    h+='<div style="font-size:9px;letter-spacing:.26em;color:#8a7860;text-transform:uppercase;text-align:center;margin-bottom:16px;font-family:'+SF+'">感知 · Noticing</div>';
     SENSES.forEach(function(s){
       var ents=(slog[s]||[]).filter(function(e){return e.text;});if(!ents.length)return;
-      h+='<div style="margin-bottom:18px"><div style="display:flex;align-items:baseline;margin-bottom:8px"><span style="font-size:14px;font-family:\'Noto Serif SC\',serif">'+SZH[s]+'</span><span style="font-size:9px;letter-spacing:.16em;color:#8a7860;text-transform:uppercase;margin-left:8px">'+s+'</span></div>';
-      ents.forEach(function(e){h+='<div style="padding-left:12px;border-left:1px solid #d8cebc;margin-bottom:8px"><div style="font-size:14px;color:#4a3c28;line-height:1.75">'+e.text+'</div>'+(e.loc?'<div style="font-size:11px;color:#8a7860;font-style:italic;margin-top:2px">'+e.loc+'</div>':'')+'</div>';});
+      h+='<div style="margin-bottom:16px">'
+        +'<div style="display:flex;align-items:baseline;margin-bottom:8px">'
+        +'<span style="font-size:15px;font-family:'+SF+'">'+SZH[s]+'</span>'
+        +'<span style="font-size:9px;letter-spacing:.14em;color:#8a7860;text-transform:uppercase;margin-left:8px;font-family:'+SF+'">'+s+'</span>'
+        +'</div>';
+      ents.forEach(function(e){
+        h+='<div style="padding-left:12px;border-left:1px solid #d8cebc;margin-bottom:8px">'
+          +'<div style="font-size:14px;color:#4a3c28;line-height:1.75;font-family:'+SF+'">'+e.text+'</div>'
+          +(e.loc?'<div style="font-size:11px;color:#8a7860;font-style:italic;margin-top:2px;font-family:'+SF+'">'+e.loc+'</div>':'')
+          +'</div>';
+      });
       h+='</div>';
     });
   }
+
   if(hasProj){
-    if(hasSense)h+='<div class="ec-div"></div>';
-    h+='<div class="ec-slbl">进行中 · Projects</div>';
+    if(hasSense)h+='<div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#c8b898,transparent);margin:20px 0"></div>';
+    h+='<div style="font-size:9px;letter-spacing:.26em;color:#8a7860;text-transform:uppercase;text-align:center;margin-bottom:18px;font-family:'+SF+'">进行中 · Projects</div>';
     for(var k in pm){
       var obj=pm[k];if(!obj.ents.length&&!obj.ss.length)continue;
       var ag=ageStyle(obj.p.ca,obj.p.ea);
-      h+='<div style="margin-bottom:28px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><div style="width:7px;height:7px;border-radius:50%;background:'+ag.ac+';flex-shrink:0"></div><div style="font-size:16px;font-family:\'Noto Serif SC\',serif;color:'+ag.ac+'">'+obj.p.title+'</div><div style="flex:1;height:1px;background:'+ag.br+'"></div></div>';
-      obj.ents.forEach(function(e){h+='<div style="margin-bottom:14px"><div style="font-size:10px;color:#8a7860;padding-left:16px;margin-bottom:5px">'+e.at+'</div><div style="font-size:14px;color:#4a3c28;line-height:1.85;white-space:pre-wrap;padding-left:16px">'+e.text+'</div></div>';});
-      obj.ss.forEach(function(s){h+='<div style="margin-bottom:14px"><div style="font-size:10px;color:#8a7860;padding-left:16px;margin-bottom:5px">'+s.et+' · '+s.at+' · '+fmt(s.dur)+'</div><div style="font-size:14px;color:#4a3c28;line-height:1.85;white-space:pre-wrap;padding-left:16px">'+s.text+'</div></div>';});
+      h+='<div style="margin-bottom:26px">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
+        +'<div style="width:7px;height:7px;border-radius:50%;background:'+ag.ac+';flex-shrink:0"></div>'
+        +'<div style="font-size:15px;color:'+ag.ac+';font-family:'+SF+'">'+obj.p.title+'</div>'
+        +'<div style="flex:1;height:1px;background:'+ag.br+'"></div>'
+        +'</div>';
+      obj.ents.forEach(function(e){
+        h+='<div style="margin-bottom:12px">'
+          +'<div style="font-size:10px;color:#8a7860;padding-left:14px;margin-bottom:4px;font-family:'+SF+'">'+e.at+'</div>'
+          +'<div style="font-size:14px;color:#4a3c28;line-height:1.8;white-space:pre-wrap;padding-left:14px;font-family:'+SF+'">'+e.text+'</div>'
+          +'</div>';
+      });
+      obj.ss.forEach(function(s){
+        h+='<div style="margin-bottom:12px">'
+          +'<div style="font-size:10px;color:#8a7860;padding-left:14px;margin-bottom:4px;font-family:'+SF+'">'+s.et+' · '+s.at+' · '+fmt(s.dur)+'</div>'
+          +'<div style="font-size:14px;color:#4a3c28;line-height:1.8;white-space:pre-wrap;padding-left:14px;font-family:'+SF+'">'+s.text+'</div>'
+          +'</div>';
+      });
       h+='</div>';
     }
   }
+
   if(freeSess.length){
-    if(hasSense||hasProj)h+='<div class="ec-div"></div>';
-    h+='<div class="ec-slbl">练习 · Practice</div>';
+    if(hasSense||hasProj)h+='<div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#c8b898,transparent);margin:20px 0"></div>';
+    h+='<div style="font-size:9px;letter-spacing:.26em;color:#8a7860;text-transform:uppercase;text-align:center;margin-bottom:18px;font-family:'+SF+'">练习 · Practice</div>';
     freeSess.forEach(function(s){
-      h+='<div style="margin-bottom:24px"><div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span style="font-size:15px;font-style:italic">'+s.et+'</span>'+(s.au?'<span style="font-size:10px;color:#8a7860">— '+s.au+'</span>':'')+'</div><div style="font-size:10px;color:#8a7860;margin-bottom:8px">'+s.at+' · '+fmt(s.dur)+'</div><div style="font-size:14px;color:#4a3c28;line-height:1.85;white-space:pre-wrap;border-left:1px solid #d8cebc;padding-left:14px">'+s.text+'</div></div>';
+      h+='<div style="margin-bottom:22px">'
+        +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px">'
+        +'<span style="font-size:15px;font-style:italic;font-family:'+SF+'">'+s.et+'</span>'
+        +(s.au?'<span style="font-size:10px;color:#8a7860;font-family:'+SF+'">— '+s.au+'</span>':'')
+        +'</div>'
+        +'<div style="font-size:10px;color:#8a7860;margin-bottom:7px;font-family:'+SF+'">'+s.at+' · '+fmt(s.dur)+'</div>'
+        +'<div style="font-size:14px;color:#4a3c28;line-height:1.8;white-space:pre-wrap;border-left:1px solid #d8cebc;padding-left:12px;font-family:'+SF+'">'+s.text+'</div>'
+        +'</div>';
     });
   }
-  h+='<div class="ec-ft"><div class="ec-ftrule"></div><div class="ec-ftmark">功课</div></div>';
+
+  h+='<div style="text-align:center;margin-top:36px">'
+    +'<div style="width:24px;height:1px;background:#d8cebc;margin:0 auto 10px"></div>'
+    +'<div style="font-size:9px;letter-spacing:.28em;color:#8a7860;text-transform:uppercase;font-family:'+SF+'">功课</div>'
+    +'</div>';
   return h;
 }
 
@@ -547,31 +586,83 @@ function buildText(){
   return out.trim();
 }
 
-function showTab(tab){
+function switchTab(tab){
+  exportTab=tab;
   document.querySelectorAll(".stab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===tab);});
-  document.getElementById("tab-prev").style.display=tab==="prev"?"flex":"none";
-  document.getElementById("tab-prev-footer").style.display=tab==="prev"?"block":"none";
-  document.getElementById("tab-txt").style.display=tab==="txt"?"flex":"none";
-  document.getElementById("tab-txt-footer").style.display=tab==="txt"?"block":"none";
+  document.getElementById("tab-prev").style.display=tab==="prev"?"block":"none";
+  document.getElementById("tab-img").style.display=tab==="img"?"block":"none";
+  document.getElementById("tab-txt").style.display=tab==="txt"?"block":"none";
+  var act=document.getElementById("sact");var hint=document.getElementById("sftr-hint");
+  if(tab==="prev"){act.style.display="block";act.textContent="生成长图";act.classList.remove("done");hint.style.display="none";}
+  else if(tab==="img"){
+    if(exportImgDone){act.style.display="none";hint.style.display="block";hint.textContent="长按图片 → 存储到相册";}
+    else{act.style.display="block";act.textContent="生成长图";act.classList.remove("done");hint.style.display="none";}
+  }
+  else{act.style.display="block";act.textContent="复制全文";act.classList.remove("done");hint.style.display="none";}
 }
 
-document.querySelectorAll(".stab").forEach(function(b){b.onclick=function(){showTab(b.getAttribute("data-tab"));};});
+document.querySelectorAll(".stab").forEach(function(b){b.onclick=function(){switchTab(b.getAttribute("data-tab"));};});
 document.getElementById("expbtn").onclick=function(){
+  exportImgDone=false;
   document.getElementById("ecard").innerHTML=buildCard();
   document.getElementById("etextbox").value=buildText();
+  document.getElementById("eimgwrap").style.display="none";
+  document.getElementById("eimgph").style.display="block";
   document.getElementById("emodal").style.display="flex";
-  showTab("prev");
+  switchTab("prev");
 };
 document.getElementById("eclose").onclick=function(){document.getElementById("emodal").style.display="none";};
+document.getElementById("emodal").onclick=function(e){if(e.target===this)this.style.display="none";};
 
-document.getElementById("copybtn").onclick=function(){
-  var txt=document.getElementById("etextbox").value;var self=this;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(txt).then(function(){self.textContent="✓ 已复制";self.classList.add("done");setTimeout(function(){self.textContent="复制全文";self.classList.remove("done");},2000);});
-  } else {
-    var ta=document.createElement("textarea");ta.value=txt;ta.style.cssText="position:fixed;opacity:0;top:0;left:0;";
-    document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);
-    self.textContent="✓ 已复制";self.classList.add("done");setTimeout(function(){self.textContent="复制全文";self.classList.remove("done");},2000);
+document.getElementById("sact").onclick=function(){
+  var self=this;
+  if(exportTab==="txt"){
+    var txt=document.getElementById("etextbox").value;
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(txt).then(function(){self.textContent="✓ 已复制";self.classList.add("done");setTimeout(function(){self.textContent="复制全文";self.classList.remove("done");},2000);});
+    } else {
+      var ta=document.createElement("textarea");ta.value=txt;ta.style.cssText="position:fixed;opacity:0;top:0;left:0;";
+      document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);
+      self.textContent="✓ 已复制";self.classList.add("done");setTimeout(function(){self.textContent="复制全文";self.classList.remove("done");},2000);
+    }
+    return;
+  }
+  // generate image — switch to img tab first
+  switchTab("img");self.textContent="生成中…";self.disabled=true;
+  function doCapture(){
+    var node=document.getElementById("ecard");
+    // give browser a moment to render
+    setTimeout(function(){
+      window.html2canvas(node,{
+        backgroundColor:"#f8f3ea",
+        scale:2,
+        useCORS:false,  // no external resources in card
+        allowTaint:false,
+        logging:false,
+        width:node.offsetWidth,
+        height:node.scrollHeight
+      }).then(function(canvas){
+        exportImgDone=true;
+        document.getElementById("eimg").src=canvas.toDataURL("image/png");
+        document.getElementById("eimgwrap").style.display="block";
+        document.getElementById("eimgph").style.display="none";
+        self.style.display="none";
+        document.getElementById("sftr-hint").style.display="block";
+        document.getElementById("sftr-hint").textContent="长按图片 → 存储到相册";
+        self.disabled=false;
+      }).catch(function(err){
+        console.log("h2c error:",err);
+        self.textContent="生成长图";self.disabled=false;switchTab("prev");
+      });
+    },200);
+  }
+  if(window.html2canvas){doCapture();}
+  else{
+    var sc=document.createElement("script");
+    sc.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    sc.onload=doCapture;
+    sc.onerror=function(){self.textContent="生成长图";self.disabled=false;};
+    document.head.appendChild(sc);
   }
 };
 </script>
