@@ -2,670 +2,758 @@
 
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>功课</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@300;400&display=swap" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #f4efe5; }
-    textarea::placeholder, input::placeholder { color: #b0a488; }
-    ::-webkit-scrollbar { height: 3px; width: 3px; }
-    ::-webkit-scrollbar-thumb { background: #d8cebc; border-radius: 2px; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.65; } }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>功课</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@300;400&display=swap"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f4efe5;font-family:'Cormorant Garamond',Georgia,serif;color:#1e1810;max-width:480px;margin:0 auto;padding-bottom:80px;}
+::-webkit-scrollbar{height:3px;width:3px;}
+::-webkit-scrollbar-thumb{background:#d8cebc;border-radius:2px;}
+textarea,input{font-family:'Cormorant Garamond',Georgia,serif;color:#1e1810;background:transparent;border:none;outline:none;}
+textarea::placeholder,input::placeholder{color:#b0a488;}
+button{cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.65;}}
+
+/* HEADER */
+#header{padding:44px 24px 20px;border-bottom:1px solid #d8cebc;display:flex;justify-content:space-between;align-items:flex-start;}
+#title-block{}
+#app-title{font-size:52px;font-family:‘Noto Serif SC’,serif;font-weight:300;letter-spacing:0.06em;line-height:1;}
+#date-str{font-size:13px;color:#8a7860;margin-top:8px;font-style:italic;letter-spacing:0.06em;}
+#new-day-btn{background:none;border:1px solid #d8cebc;border-radius:6px;padding:8px 14px;font-size:12px;color:#8a7860;font-family:‘Noto Serif SC’,serif;margin-top:6px;letter-spacing:0.06em;line-height:1.4;text-align:center;}
+
+/* SECTIONS */
+.section{padding:24px 24px 28px;border-bottom:1px solid #d8cebc;}
+.section-label{font-size:10px;letter-spacing:0.22em;color:#8a7860;text-transform:uppercase;margin-bottom:16px;}
+
+/* SENSE */
+#sense-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;}
+.sense-col{min-width:138px;flex:0 0 138px;}
+.sense-title{font-size:17px;font-family:‘Noto Serif SC’,serif;margin-bottom:2px;}
+.sense-sub{font-size:10px;color:#8a7860;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;}
+.sense-entry{margin-bottom:8px;}
+.sense-entry textarea{width:100%;background:rgba(255,255,255,0.52);border:1px solid #d8cebc;border-radius:4px;padding:6px 8px;font-size:13px;resize:none;line-height:1.6;}
+.sense-entry input{width:100%;border-bottom:1px solid #d8cebc;padding:2px 0;font-size:11px;color:#8a7860;font-style:italic;}
+.add-sense-btn{width:100%;background:none;border:1px dashed #d8cebc;border-radius:4px;color:#8a7860;font-size:18px;padding:3px 0;line-height:1;}
+
+/* PROJECTS */
+#project-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;align-items:flex-start;}
+.project-card{min-width:118px;flex:0 0 118px;border-radius:6px;padding:12px 10px;cursor:pointer;transition:border-color 0.2s;}
+.project-card-title{font-size:13px;font-family:‘Noto Serif SC’,serif;line-height:1.4;margin-bottom:6px;word-break:break-all;}
+.project-card-meta{display:flex;justify-content:space-between;}
+.project-card-days{font-size:10px;opacity:0.65;}
+.project-card-count{font-size:10px;opacity:0.55;}
+#add-project-btn{min-width:80px;flex:0 0 80px;background:transparent;border:1px dashed #d8cebc;border-radius:6px;padding:12px 8px;color:#8a7860;font-size:12px;font-family:‘Noto Serif SC’,serif;line-height:1.5;}
+#project-expanded{margin-top:14px;}
+.prev-entries{border-bottom:1px solid #d8cebc;padding:14px 18px;max-height:180px;overflow-y:auto;}
+.prev-label{font-size:9px;letter-spacing:0.2em;color:#8a7860;text-transform:uppercase;margin-bottom:10px;}
+.prev-entry-time{font-size:10px;color:#8a7860;margin-bottom:3px;}
+.prev-entry-text{font-size:13px;color:#4a3c28;line-height:1.7;white-space:pre-wrap;opacity:0.85;}
+.project-write-area{padding:18px;}
+.project-write-label{font-size:10px;color:#8a7860;letter-spacing:0.14em;margin-bottom:10px;font-style:italic;}
+.project-write-area textarea{width:100%;font-size:15px;line-height:1.85;resize:vertical;border-bottom:1px solid #d8cebc;padding-bottom:12px;margin-bottom:12px;min-height:120px;}
+#project-form{margin-top:16px;background:rgba(255,255,255,0.52);border:1px solid #d8cebc;border-radius:8px;padding:18px;}
+#project-form input{width:100%;border-bottom:1px solid #d8cebc;padding:6px 0;font-size:17px;font-family:‘Noto Serif SC’,serif;margin-bottom:14px;}
+.days-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.days-label{font-size:11px;color:#8a7860;font-style:italic;}
+.day-opt{border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;color:#8a7860;background:transparent;}
+.day-opt.active{background:#2a2018;border-color:#2a2018;color:#f4efe5;}
+.form-btns{display:flex;gap:8px;}
+.btn-primary{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;font-family:‘Noto Serif SC’,serif;}
+.btn-ghost{background:transparent;color:#8a7860;border:1px solid #d8cebc;border-radius:4px;padding:8px 16px;font-size:13px;}
+
+/* PRACTICE */
+#time-btns{display:flex;gap:10px;margin-bottom:20px;}
+.time-btn{flex:1;border:1px solid #d8cebc;border-radius:6px;padding:14px 4px;background:transparent;line-height:1.2;}
+.time-btn.active{background:#2a2018;border-color:#2a2018;}
+.time-num{font-size:30px;color:#4a3c28;font-weight:300;}
+.time-btn.active .time-num{color:#f4efe5;}
+.time-unit{font-size:10px;color:#8a7860;letter-spacing:0.14em;text-transform:uppercase;}
+.time-btn.active .time-unit{color:rgba(244,239,229,0.6);}
+#exercise-card{background:rgba(255,255,255,0.52);border:1px solid #d8cebc;border-radius:8px;padding:20px;}
+.ex-author{font-size:10px;letter-spacing:0.2em;color:#8a7860;text-transform:uppercase;margin-bottom:4px;}
+.ex-title{font-size:21px;font-style:italic;color:#1e1810;margin-bottom:12px;}
+.ex-instruction{font-size:14px;color:#4a3c28;line-height:1.75;border-left:2px solid #d8cebc;padding-left:14px;margin-bottom:18px;}
+.project-tags{margin-bottom:16px;}
+.project-tag-label{font-size:10px;color:#8a7860;font-style:italic;letter-spacing:0.14em;margin-bottom:8px;}
+.project-tags-row{display:flex;flex-wrap:wrap;gap:6px;}
+.project-tag{border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;color:#4a3c28;background:transparent;font-family:‘Noto Serif SC’,serif;}
+.project-tag.active{background:#2a2018;border-color:#2a2018;color:#f4efe5;}
+.timer-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+#timer-display{font-size:26px;font-variant-numeric:tabular-nums;color:#1e1810;}
+.timer-ctrl{background:none;border:none;color:#8a7860;font-size:12px;font-style:italic;}
+#practice-textarea{width:100%;min-height:200px;border-top:1px solid #d8cebc;padding-top:16px;font-size:16px;line-height:1.85;resize:vertical;}
+.save-row{margin-top:14px;display:flex;gap:10px;align-items:center;}
+.save-hint{font-size:11px;color:#8a7860;font-style:italic;}
+.save-btn{background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:10px 28px;font-size:13px;font-family:‘Noto Serif SC’,serif;transition:background 0.3s;}
+.save-btn.saved{background:#3d5a38;}
+#saved-sessions{margin-top:20px;}
+.saved-label{font-size:10px;letter-spacing:0.18px;color:#8a7860;text-transform:uppercase;margin-bottom:12px;}
+.saved-item{border-left:2px solid #d8cebc;padding-left:14px;margin-bottom:14px;}
+.saved-meta{font-size:11px;color:#8a7860;margin-bottom:4px;}
+.saved-preview{font-size:13px;color:#4a3c28;line-height:1.7;white-space:pre-wrap;}
+
+/* FOOTER */
+#footer{padding:24px;}
+#export-btn{width:100%;background:#2a2018;color:#f4efe5;border:none;border-radius:6px;padding:16px 0;font-size:14px;letter-spacing:0.12em;font-family:‘Cormorant Garamond’,serif;}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(30,24,16,0.75);z-index:100;display:flex;align-items:center;justify-content:center;}
+.overlay.bottom{align-items:flex-end;justify-content:center;}
+.modal{background:#f4efe5;border-radius:16px;padding:36px 32px;max-width:320px;width:90%;text-align:center;}
+.modal-title{font-size:28px;font-family:‘Noto Serif SC’,serif;margin-bottom:12px;}
+.modal-body{font-size:14px;color:#4a3c28;line-height:1.75;margin-bottom:28px;}
+.modal-note{font-style:italic;color:#8a7860;}
+.modal-btns{display:flex;gap:10px;}
+.modal-cancel{flex:1;background:transparent;border:1px solid #d8cebc;border-radius:6px;padding:12px 0;font-size:13px;color:#8a7860;}
+.modal-confirm{flex:1;background:#2a2018;border:none;border-radius:6px;padding:12px 0;font-size:13px;color:#f4efe5;font-family:‘Noto Serif SC’,serif;}
+
+/* EXPORT SHEET */
+#export-sheet{background:#f4efe5;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92vh;display:flex;flex-direction:column;}
+.sheet-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 8px;flex-shrink:0;}
+.sheet-title{font-size:13px;font-family:‘Noto Serif SC’,serif;}
+.sheet-close{background:none;border:none;color:#8a7860;font-size:22px;line-height:1;}
+.sheet-tabs{display:flex;gap:6px;padding:0 24px 16px;flex-shrink:0;}
+.sheet-tab{flex:1;border:1px solid #d8cebc;border-radius:4px;padding:8px 0;font-size:11px;color:#8a7860;background:transparent;letter-spacing:0.06em;}
+.sheet-tab.active{background:#2a2018;border-color:#2a2018;color:#f4efe5;}
+.sheet-body{overflow-y:auto;flex:1;padding:0 16px 8px;}
+.sheet-footer{padding:12px 24px 32px;flex-shrink:0;text-align:center;}
+.sheet-action-btn{width:100%;background:#2a2018;color:#f4efe5;border:none;border-radius:6px;padding:14px 0;font-size:13px;letter-spacing:0.1em;font-family:‘Cormorant Garamond’,serif;transition:background 0.3s;}
+.sheet-action-btn.done{background:#3d5a38;}
+.sheet-hint{font-size:11px;color:#8a7860;font-style:italic;}
+
+/* EXPORT VISUAL */
+#export-visual{border:1px solid #d8cebc;border-radius:12px;overflow:hidden;}
+#export-img-wrap{border-radius:12px;overflow:hidden;border:1px solid #d8cebc;}
+#export-img-wrap img{width:100%;display:block;}
+#export-text-wrap{border:1px solid #d8cebc;border-radius:12px;overflow:hidden;}
+#export-text-wrap textarea{width:100%;min-height:320px;background:#f8f3ea;border:none;padding:24px 20px;font-size:13px;line-height:1.8;color:#4a3c28;font-family:monospace;resize:none;}
+
+/* EXPORT CARD CONTENT */
+#export-card{background:#f8f3ea;font-family:‘Cormorant Garamond’,Georgia,serif;color:#1e1810;padding:36px 28px 44px;}
+.ec-header{text-align:center;margin-bottom:30px;}
+.ec-badge{font-size:11px;letter-spacing:0.32em;color:#8a7860;text-transform:uppercase;margin-bottom:10px;}
+.ec-date{font-size:15px;color:#4a3c28;font-style:italic;}
+.ec-rule{width:36px;height:1px;background:#d8cebc;margin:16px auto 0;}
+.ec-section-label{font-size:9px;letter-spacing:0.28em;color:#8a7860;text-transform:uppercase;text-align:center;margin-bottom:18px;}
+.ec-divider{width:100%;height:1px;background:linear-gradient(to right,transparent,#c8b898,transparent);margin:22px 0;}
+.ec-sense-title{font-size:14px;font-family:‘Noto Serif SC’,serif;}
+.ec-sense-sub{font-size:9px;letter-spacing:0.16em;color:#8a7860;text-transform:uppercase;margin-left:8px;}
+.ec-sense-row{display:flex;align-items:baseline;margin-bottom:8px;}
+.ec-entry{padding-left:12px;border-left:1px solid #d8cebc;margin-bottom:8px;}
+.ec-entry-text{font-size:14px;color:#4a3c28;line-height:1.75;}
+.ec-entry-loc{font-size:11px;color:#8a7860;font-style:italic;margin-top:2px;}
+.ec-proj-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.ec-proj-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ec-proj-name{font-size:16px;font-family:‘Noto Serif SC’,serif;}
+.ec-proj-line{flex:1;height:1px;}
+.ec-entry-time{font-size:10px;color:#8a7860;margin-bottom:5px;padding-left:16px;}
+.ec-entry-body{font-size:14px;color:#4a3c28;line-height:1.85;white-space:pre-wrap;padding-left:16px;}
+.ec-session-meta{font-size:10px;color:#8a7860;padding-left:16px;margin-bottom:5px;}
+.ec-ex-title{font-size:15px;font-style:italic;}
+.ec-ex-author{font-size:10px;color:#8a7860;margin-left:8px;}
+.ec-session-time{font-size:10px;color:#8a7860;margin-bottom:8px;}
+.ec-session-body{font-size:14px;color:#4a3c28;line-height:1.85;white-space:pre-wrap;border-left:1px solid #d8cebc;padding-left:14px;}
+.ec-footer{text-align:center;margin-top:36px;}
+.ec-footer-rule{width:24px;height:1px;background:#d8cebc;margin:0 auto 10px;}
+.ec-footer-mark{font-size:9px;letter-spacing:0.3em;color:#8a7860;text-transform:uppercase;}
+</style>
+
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
+
+<div id="header">
+  <div id="title-block">
+    <div id="app-title">功课</div>
+    <div id="date-str"></div>
+  </div>
+  <button id="new-day-btn">新的<br/>一天</button>
+</div>
+
+<!-- ZONE 1 -->
+
+<div class="section" id="zone-sense">
+  <div class="section-label">感知 · Noticing</div>
+  <div id="sense-scroll"></div>
+</div>
+
+<!-- ZONE 2 -->
+
+<div class="section" id="zone-projects">
+  <div class="section-label">进行中 · Projects</div>
+  <div id="project-scroll"></div>
+  <div id="project-expanded" style="display:none;"></div>
+  <div id="project-form" style="display:none;">
+    <input id="proj-name-input" placeholder="项目名称"/>
+    <div class="days-row">
+      <span class="days-label">到期</span>
+      <button class="day-opt active" data-days="3">3天</button>
+      <button class="day-opt" data-days="7">7天</button>
+      <button class="day-opt" data-days="14">14天</button>
+    </div>
+    <div class="form-btns">
+      <button class="btn-primary" id="proj-add-confirm">添加</button>
+      <button class="btn-ghost" id="proj-add-cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ZONE 3 -->
+
+<div class="section" id="zone-practice">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="section-label" style="margin-bottom:0;">练习 · Practice</div>
+    <div id="session-count-label" style="font-size:11px;color:#8a7860;font-style:italic;"></div>
+  </div>
+  <div id="time-btns">
+    <button class="time-btn" data-time="2"><div class="time-num">2</div><div class="time-unit">min</div></button>
+    <button class="time-btn" data-time="10"><div class="time-num">10</div><div class="time-unit">min</div></button>
+    <button class="time-btn" data-time="60"><div class="time-num">60</div><div class="time-unit">min</div></button>
+  </div>
+  <div id="exercise-card" style="display:none;">
+    <div class="ex-author" id="ex-author"></div>
+    <div class="ex-title" id="ex-title"></div>
+    <div class="ex-instruction" id="ex-instruction"></div>
+    <div class="project-tags" id="project-tags-wrap" style="display:none;">
+      <div class="project-tag-label">or work on —</div>
+      <div class="project-tags-row" id="project-tags-row"></div>
+    </div>
+    <div class="timer-row">
+      <span id="timer-display">0:00</span>
+      <button class="timer-ctrl" id="timer-toggle">pause</button>
+      <button class="timer-ctrl" id="timer-reset" style="font-size:11px;">reset</button>
+    </div>
+    <textarea id="practice-textarea" placeholder="begin here…"></textarea>
+    <div class="save-row">
+      <button class="save-btn" id="save-session-btn">保存练习</button>
+      <span class="save-hint">保存后可再开新练习</span>
+    </div>
+  </div>
+  <div id="saved-sessions" style="display:none;">
+    <div class="saved-label">今日已保存</div>
+    <div id="saved-sessions-list"></div>
+  </div>
+</div>
+
+<div id="footer">
+  <button id="export-btn">导出今日 · Export Today</button>
+</div>
+
+<!-- NEW DAY MODAL -->
+
+<div class="overlay" id="new-day-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">新的一天</div>
+    <div class="modal-body">
+      感知日志、练习记录和项目笔记将全部清空。<br/>项目卡片会保留。<br/><br/>
+      <span class="modal-note">建议先导出今日存档。</span>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" id="new-day-cancel">取消</button>
+      <button class="modal-confirm" id="new-day-confirm">确认开始</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT SHEET -->
+
+<div class="overlay bottom" id="export-modal" style="display:none;">
+  <div id="export-sheet">
+    <div class="sheet-header">
+      <div class="sheet-title">今日存档</div>
+      <button class="sheet-close" id="export-close">×</button>
+    </div>
+    <div class="sheet-tabs">
+      <button class="sheet-tab active" data-tab="preview">预览</button>
+      <button class="sheet-tab" data-tab="image">长图</button>
+      <button class="sheet-tab" data-tab="text">复制文本</button>
+    </div>
+    <div class="sheet-body">
+      <div id="tab-preview">
+        <div id="export-visual"><div id="export-card"></div></div>
+      </div>
+      <div id="tab-image" style="display:none;">
+        <div id="export-img-wrap" style="display:none;"><img id="export-img" src="" alt=""/></div>
+        <div id="tab-image-placeholder" style="text-align:center;padding:40px 0;color:#8a7860;font-style:italic;font-size:14px;">点击下方按钮生成长图</div>
+      </div>
+      <div id="tab-text" style="display:none;">
+        <div id="export-text-wrap"><textarea id="export-text-area" readonly></textarea></div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="sheet-action-btn" id="sheet-action-btn">生成长图</button>
+      <div class="sheet-hint" id="sheet-hint" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────
 
 const EXERCISES = {
-2: [
-{ title: “Spiral Warmup”, author: “Lynda Barry”, instruction: “Hold one word or image from your day. Draw a spiral in your mind. Write whatever surfaces — don’t stop the hand. No sentences required.” },
-{ title: “Quick List”, author: “Sei Shonagon”, instruction: “Write a list: things that made your heart beat faster today. Five items, no explanations. Let the list be strange.” },
-{ title: “One Sense, Now”, author: “Practice”, instruction: “Pick the sense most alive in this moment. Two or three lines only — present tense, completely specific, no interpretation.” },
-],
-10: [
-{ title: “Daily Diary”, author: “Lynda Barry”, instruction: “Three columns in your mind: DID (7 things from last 24 hours) / SAW (7 things) / OVERHEARD (1 thing). Write fast. No editing.” },
-{ title: “X-Page”, author: “Lynda Barry”, instruction: “Pick an object or image from today. Spend 4 minutes filling the page with present-tense sensory details. Then write from it for 6 minutes.” },
-{ title: “Locate Yourself”, author: “Annie Dillard”, instruction: “Where are you right now? Write it with complete specificity — surface appearances, five senses, the history of this place. Don’t describe feelings.” },
-],
-60: [
-{ title: “Memory Recall”, author: “Lynda Barry”, instruction: “List ten instances of one thing from your past — kitchens, a recurring sound, cars. Pick the one that surfaces fastest. X-page it for 4 minutes. Then write the full scene.” },
-{ title: “Write About Winter in Summer”, author: “Annie Dillard”, instruction: “Write about something absent — out of season, out of reach, not here. Begin with what is present and let the absent thing arrive.” },
-{ title: “List Into Essay”, author: “Sei Shonagon”, instruction: “Begin: things that are near though distant / things that create the appearance of deep feeling. Write until one item opens into a door. Follow it.” },
-],
+  2:[
+    {title:"Spiral Warmup",author:"Lynda Barry",instruction:"Hold one word or image from your day. Draw a spiral in your mind. Write whatever surfaces — don't stop the hand. No sentences required."},
+    {title:"Quick List",author:"Sei Shonagon",instruction:"Write a list: things that made your heart beat faster today. Five items, no explanations. Let the list be strange."},
+    {title:"One Sense, Now",author:"Practice",instruction:"Pick the sense most alive in this moment. Two or three lines only — present tense, completely specific, no interpretation."},
+  ],
+  10:[
+    {title:"Daily Diary",author:"Lynda Barry",instruction:"Three columns in your mind: DID (7 things from last 24 hours) / SAW (7 things) / OVERHEARD (1 thing). Write fast. No editing."},
+    {title:"X-Page",author:"Lynda Barry",instruction:"Pick an object or image from today. Spend 4 minutes filling the page with present-tense sensory details. Then write from it for 6 minutes."},
+    {title:"Locate Yourself",author:"Annie Dillard",instruction:"Where are you right now? Write it with complete specificity — surface appearances, five senses, the history of this place. Don't describe feelings."},
+  ],
+  60:[
+    {title:"Memory Recall",author:"Lynda Barry",instruction:"List ten instances of one thing from your past — kitchens, a recurring sound, cars. Pick the one that surfaces fastest. X-page it for 4 minutes. Then write the full scene."},
+    {title:"Write About Winter in Summer",author:"Annie Dillard",instruction:"Write about something absent — out of season, out of reach, not here. Begin with what is present and let the absent thing arrive."},
+    {title:"List Into Essay",author:"Sei Shonagon",instruction:"Begin: things that are near though distant / things that create the appearance of deep feeling. Write until one item opens into a door. Follow it."},
+  ],
 };
 
-const SENSES = [“sight”, “sound”, “smell”, “taste”, “touch”];
-const SENSE_ZH = { sight: “所见”, sound: “所闻”, smell: “所嗅”, taste: “所尝”, touch: “所触” };
-const EMPTY_SENSE = { sight: [], sound: [], smell: [], taste: [], touch: [] };
+const SENSES = ["sight","sound","smell","taste","touch"];
+const SENSE_ZH = {sight:"所见",sound:"所闻",smell:"所嗅",taste:"所尝",touch:"所触"};
 
-function getAgeStyle(createdAt, expiresAt) {
-const pct = Math.max(0, (expiresAt - Date.now()) / (expiresAt - createdAt));
-if (pct > 0.6) return { bg: “#dde8d8”, border: “#9db89a”, accent: “#3d5a38”, pulse: false };
-if (pct > 0.35) return { bg: “#ede8d0”, border: “#c8b870”, accent: “#5a4010”, pulse: false };
-if (pct > 0.12) return { bg: “#ede0c8”, border: “#c88840”, accent: “#5a2808”, pulse: false };
-return { bg: “#edd8c8”, border: “#c84830”, accent: “#4a1008”, pulse: true };
+function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
+let senseLog = load("gk_sense",{sight:[],sound:[],smell:[],taste:[],touch:[]});
+let projects = load("gk_projects",[]);
+let sessions = load("gk_sessions",[]);
+let projectEntries = load("gk_pentries",{});
+let projectDrafts = {};
+let selectedTime = null;
+let currentExercise = null;
+let activeProjectId = null;
+let timerSec = 0;
+let timerOn = false;
+let timerInterval = null;
+let expandedProjectId = null;
+let selectedDays = 3;
+let exportTab = "preview";
+let exportImg = null;
+
+// ── UTILS ────────────────────────────────────────────────────
+
+function fmt(s){return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;}
+
+function getAgeStyle(createdAt,expiresAt){
+  const pct=Math.max(0,(expiresAt-Date.now())/(expiresAt-createdAt));
+  if(pct>0.6)return{bg:"#dde8d8",border:"#9db89a",accent:"#3d5a38"};
+  if(pct>0.35)return{bg:"#ede8d0",border:"#c8b870",accent:"#5a4010"};
+  if(pct>0.12)return{bg:"#ede0c8",border:"#c88840",accent:"#5a2808"};
+  return{bg:"#edd8c8",border:"#c84830",accent:"#4a1008",pulse:true};
 }
 
-function fmt(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+function purgeExpiredProjects(){
+  const before=projects.length;
+  projects=projects.filter(p=>p.expiresAt>Date.now());
+  if(projects.length!==before)save("gk_projects",projects);
+}
 
-function loadH2C() {
-return new Promise((resolve, reject) => {
-if (window.html2canvas) { resolve(window.html2canvas); return; }
-const sc = document.createElement(“script”);
-sc.src = “https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js”;
-sc.onload = () => resolve(window.html2canvas);
-sc.onerror = reject;
-document.head.appendChild(sc);
+// ── DATE ─────────────────────────────────────────────────────
+
+document.getElementById("date-str").textContent=new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
+
+// ── SENSE LOG ────────────────────────────────────────────────
+
+function renderSense(){
+  const scroll=document.getElementById("sense-scroll");
+  scroll.innerHTML="";
+  SENSES.forEach(s=>{
+    const col=document.createElement("div");
+    col.className="sense-col";
+    col.innerHTML=`<div class="sense-title">${SENSE_ZH[s]}</div><div class="sense-sub">${s}</div>`;
+    (senseLog[s]||[]).forEach((entry,i)=>{
+      const wrap=document.createElement("div");
+      wrap.className="sense-entry";
+      const ta=document.createElement("textarea");
+      ta.rows=3;ta.placeholder="noticed…";ta.value=entry.text;
+      ta.addEventListener("input",e=>{senseLog[s][i].text=e.target.value;save("gk_sense",senseLog);});
+      const inp=document.createElement("input");
+      inp.placeholder="where";inp.value=entry.location||"";
+      inp.addEventListener("input",e=>{senseLog[s][i].location=e.target.value;save("gk_sense",senseLog);});
+      wrap.appendChild(ta);wrap.appendChild(inp);col.appendChild(wrap);
+    });
+    const addBtn=document.createElement("button");
+    addBtn.className="add-sense-btn";addBtn.textContent="+";
+    addBtn.addEventListener("click",()=>{
+      senseLog[s].push({id:Date.now(),text:"",location:""});
+      save("gk_sense",senseLog);renderSense();
+    });
+    col.appendChild(addBtn);scroll.appendChild(col);
+  });
+}
+renderSense();
+
+// ── PROJECTS ─────────────────────────────────────────────────
+
+function renderProjects(){
+  purgeExpiredProjects();
+  const scroll=document.getElementById("project-scroll");
+  scroll.innerHTML="";
+  projects.forEach(p=>{
+    const ag=getAgeStyle(p.createdAt,p.expiresAt);
+    const daysLeft=Math.ceil((p.expiresAt-Date.now())/86400000);
+    const count=(projectEntries[p.id]||[]).length;
+    const isOpen=expandedProjectId===p.id;
+    const card=document.createElement("div");
+    card.className="project-card";
+    card.style.cssText=`background:${ag.bg};border:1px solid ${isOpen?ag.accent:ag.border};`;
+    if(ag.pulse)card.style.animation="pulse 2s ease-in-out infinite";
+    card.innerHTML=`<div class="project-card-title" style="color:${ag.accent}">${p.title}</div>
+      <div class="project-card-meta">
+        <span class="project-card-days" style="color:${ag.accent}">${daysLeft}d left</span>
+        ${count>0?`<span class="project-card-count" style="color:${ag.accent}">${count} notes</span>`:""}
+      </div>`;
+    card.addEventListener("click",()=>{
+      expandedProjectId=isOpen?null:p.id;
+      renderProjects();renderProjectExpanded();
+    });
+    scroll.appendChild(card);
+  });
+  const addBtn=document.createElement("button");
+  addBtn.id="add-project-btn";addBtn.textContent="+ 新项目";
+  addBtn.addEventListener("click",()=>{
+    document.getElementById("project-form").style.display="block";
+    document.getElementById("proj-name-input").focus();
+  });
+  scroll.appendChild(addBtn);
+  renderProjectTags();
+}
+
+function renderProjectExpanded(){
+  const wrap=document.getElementById("project-expanded");
+  if(!expandedProjectId){wrap.style.display="none";wrap.innerHTML="";return;}
+  const p=projects.find(x=>x.id===expandedProjectId);
+  if(!p){wrap.style.display="none";return;}
+  const ag=getAgeStyle(p.createdAt,p.expiresAt);
+  const entries=projectEntries[p.id]||[];
+  const draft=projectDrafts[p.id]||"";
+  wrap.style.display="block";
+  wrap.innerHTML=`<div style="background:rgba(255,255,255,0.52);border:1px solid ${ag.border};border-radius:8px;overflow:hidden;">
+    ${entries.length>0?`<div class="prev-entries">
+      <div class="prev-label">今日已写</div>
+      ${entries.map((e,i)=>`<div style="margin-bottom:${i<entries.length-1?12:0}px">
+        <div class="prev-entry-time">${e.savedAt}</div>
+        <div class="prev-entry-text">${e.text.length>100?e.text.slice(0,100)+"…":e.text}</div>
+      </div>`).join("")}
+    </div>`:""}
+    <div class="project-write-area">
+      <div class="project-write-label">${entries.length>0?"继续写 —":p.title}</div>
+      <textarea id="proj-draft-ta" placeholder="write here…" rows="6" style="width:100%;font-size:15px;line-height:1.85;resize:vertical;border-bottom:1px solid #d8cebc;padding-bottom:12px;margin-bottom:12px;font-family:'Cormorant Garamond',serif;color:#1e1810;background:transparent;border-top:none;border-left:none;border-right:none;outline:none;">${draft}</textarea>
+
+```
+  <button id="proj-save-btn" style="background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;font-family:'Noto Serif SC',serif;cursor:pointer;transition:background 0.3s;">保存</button>
+</div>
+```
+
+  </div>`;
+  document.getElementById("proj-draft-ta").addEventListener("input",e=>{projectDrafts[p.id]=e.target.value;});
+  document.getElementById("proj-save-btn").addEventListener("click",()=>{
+    const draft=(projectDrafts[p.id]||"").trim();
+    if(!draft)return;
+    if(!projectEntries[p.id])projectEntries[p.id]=[];
+    projectEntries[p.id].push({id:Date.now(),text:draft,savedAt:new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})});
+    projectDrafts[p.id]="";
+    save("gk_pentries",projectEntries);
+    const btn=document.getElementById("proj-save-btn");
+    btn.textContent="✓ 已保存";btn.style.background="#3d5a38";
+    setTimeout(()=>{renderProjects();renderProjectExpanded();},800);
+  });
+}
+
+// Days selector
+document.querySelectorAll(”.day-opt”).forEach(btn=>{
+btn.addEventListener(“click”,()=>{
+selectedDays=parseInt(btn.dataset.days);
+document.querySelectorAll(”.day-opt”).forEach(b=>b.classList.remove(“active”));
+btn.classList.add(“active”);
+});
+});
+document.getElementById(“proj-add-confirm”).addEventListener(“click”,()=>{
+const name=document.getElementById(“proj-name-input”).value.trim();
+if(!name)return;
+projects.push({id:Date.now(),title:name,createdAt:Date.now(),expiresAt:Date.now()+selectedDays*86400000});
+save(“gk_projects”,projects);
+document.getElementById(“proj-name-input”).value=””;
+document.getElementById(“project-form”).style.display=“none”;
+renderProjects();renderProjectExpanded();
+});
+document.getElementById(“proj-add-cancel”).addEventListener(“click”,()=>{
+document.getElementById(“project-form”).style.display=“none”;
+});
+
+renderProjects();renderProjectExpanded();
+
+// ── PRACTICE ─────────────────────────────────────────────────
+
+function renderProjectTags(){
+const wrap=document.getElementById(“project-tags-wrap”);
+const row=document.getElementById(“project-tags-row”);
+if(!projects.length){wrap.style.display=“none”;return;}
+wrap.style.display=“block”;row.innerHTML=””;
+projects.forEach(p=>{
+const btn=document.createElement(“button”);
+btn.className=“project-tag”+(activeProjectId===p.id?” active”:””);
+btn.textContent=p.title;
+btn.addEventListener(“click”,()=>{
+activeProjectId=activeProjectId===p.id?null:p.id;
+renderProjectTags();
+});
+row.appendChild(btn);
 });
 }
 
-const C = { bg: “#f4efe5”, ink: “#1e1810”, mid: “#4a3c28”, faint: “#8a7860”, rule: “#d8cebc”, card: “rgba(255,255,255,0.52)”, accent: “#2a2018” };
-const sLabel = { fontSize: 10, letterSpacing: “0.22em”, color: C.faint, textTransform: “uppercase”, fontFamily: “‘Cormorant Garamond’, serif”, marginBottom: 16 };
-const inp = { background: “transparent”, border: “none”, outline: “none”, fontFamily: “‘Cormorant Garamond’, serif”, color: C.ink };
+function pickExercise(t){
+selectedTime=t;
+document.querySelectorAll(”.time-btn”).forEach(b=>{
+b.classList.toggle(“active”,parseInt(b.dataset.time)===t);
+});
+const pool=EXERCISES[t];
+currentExercise=pool[Math.floor(Math.random()*pool.length)];
+document.getElementById(“ex-author”).textContent=currentExercise.author;
+document.getElementById(“ex-title”).textContent=currentExercise.title;
+document.getElementById(“ex-instruction”).textContent=currentExercise.instruction;
+document.getElementById(“practice-textarea”).value=””;
+document.getElementById(“exercise-card”).style.display=“block”;
+activeProjectId=null;
+renderProjectTags();
+timerSec=0;updateTimerDisplay();startTimer();
+const saveBtn=document.getElementById(“save-session-btn”);
+saveBtn.textContent=“保存练习”;saveBtn.classList.remove(“saved”);
+}
 
-// ── BUILD PLAIN TEXT ──────────────────────────────────────────
+document.querySelectorAll(”.time-btn”).forEach(btn=>{
+btn.addEventListener(“click”,()=>pickExercise(parseInt(btn.dataset.time)));
+});
 
-function buildText(senseLog, projects, sessions, projectEntries) {
-const date = new Date().toLocaleDateString(“zh-CN”, { year: “numeric”, month: “long”, day: “numeric”, weekday: “long” });
-let out = `功课  ${date}\n${"─".repeat(32)}\n\n`;
+function startTimer(){timerOn=true;clearInterval(timerInterval);timerInterval=setInterval(()=>{timerSec++;updateTimerDisplay();},1000);}
+function updateTimerDisplay(){document.getElementById(“timer-display”).textContent=fmt(timerSec);}
 
-const hasSenses = SENSES.some(s => senseLog[s]?.some(e => e.text));
-if (hasSenses) {
-out += `感知 · Noticing\n\n`;
-SENSES.forEach(s => {
-const entries = senseLog[s]?.filter(e => e.text) || [];
-if (!entries.length) return;
-out += `${SENSE_ZH[s]} · ${s}\n`;
-entries.forEach(e => { out += ` ${e.text}${e.location ?`  (${e.location})` : ""}\n`; });
-out += “\n”;
+document.getElementById(“timer-toggle”).addEventListener(“click”,function(){
+timerOn=!timerOn;
+if(timerOn)startTimer();else clearInterval(timerInterval);
+this.textContent=timerOn?“pause”:“resume”;
+});
+document.getElementById(“timer-reset”).addEventListener(“click”,()=>{
+clearInterval(timerInterval);timerOn=false;timerSec=0;updateTimerDisplay();
+document.getElementById(“timer-toggle”).textContent=“resume”;
+});
+
+document.getElementById(“save-session-btn”).addEventListener(“click”,()=>{
+const text=document.getElementById(“practice-textarea”).value.trim();
+if(!text)return;
+const activeProj=projects.find(p=>p.id===activeProjectId);
+sessions.push({
+id:Date.now(),
+exerciseTitle:currentExercise?.title||””,
+author:currentExercise?.author||””,
+projectTitle:activeProj?.title||””,
+text,duration:timerSec,
+savedAt:new Date().toLocaleTimeString(“zh-CN”,{hour:“2-digit”,minute:“2-digit”})
+});
+save(“gk_sessions”,sessions);
+clearInterval(timerInterval);timerOn=false;
+const btn=document.getElementById(“save-session-btn”);
+btn.textContent=“✓ 已保存”;btn.classList.add(“saved”);
+setTimeout(()=>{
+document.getElementById(“exercise-card”).style.display=“none”;
+selectedTime=null;currentExercise=null;activeProjectId=null;timerSec=0;
+document.querySelectorAll(”.time-btn”).forEach(b=>b.classList.remove(“active”));
+btn.textContent=“保存练习”;btn.classList.remove(“saved”);
+renderSavedSessions();
+},1200);
+});
+
+function renderSavedSessions(){
+const count=sessions.length;
+document.getElementById(“session-count-label”).textContent=count>0?`${count} saved today`:””;
+const wrap=document.getElementById(“saved-sessions”);
+const list=document.getElementById(“saved-sessions-list”);
+if(!count){wrap.style.display=“none”;return;}
+wrap.style.display=“block”;list.innerHTML=””;
+sessions.forEach(s=>{
+const item=document.createElement(“div”);
+item.className=“saved-item”;
+const preview=s.text.slice(0,120)+(s.text.length>120?”…”:””);
+item.innerHTML=`<div class="saved-meta">${s.savedAt} · ${s.exerciseTitle}${s.projectTitle?" · "+s.projectTitle:""} · ${fmt(s.duration)}</div> <div class="saved-preview">${preview}</div>`;
+list.appendChild(item);
+});
+}
+renderSavedSessions();
+
+// ── NEW DAY ───────────────────────────────────────────────────
+
+document.getElementById(“new-day-btn”).addEventListener(“click”,()=>{document.getElementById(“new-day-modal”).style.display=“flex”;});
+document.getElementById(“new-day-cancel”).addEventListener(“click”,()=>{document.getElementById(“new-day-modal”).style.display=“none”;});
+document.getElementById(“new-day-confirm”).addEventListener(“click”,()=>{
+senseLog={sight:[],sound:[],smell:[],taste:[],touch:[]};
+sessions=[];projectEntries={};projectDrafts={};
+selectedTime=null;currentExercise=null;activeProjectId=null;
+timerSec=0;timerOn=false;clearInterval(timerInterval);
+expandedProjectId=null;
+save(“gk_sense”,senseLog);save(“gk_sessions”,sessions);save(“gk_pentries”,projectEntries);
+document.getElementById(“new-day-modal”).style.display=“none”;
+document.getElementById(“exercise-card”).style.display=“none”;
+document.querySelectorAll(”.time-btn”).forEach(b=>b.classList.remove(“active”));
+renderSense();renderProjects();renderProjectExpanded();renderSavedSessions();
+});
+
+// ── EXPORT ───────────────────────────────────────────────────
+
+function buildExportCard(){
+const dateStr=new Date().toLocaleDateString(“zh-CN”,{year:“numeric”,month:“long”,day:“numeric”,weekday:“long”});
+const hasSenses=SENSES.some(s=>(senseLog[s]||[]).some(e=>e.text));
+
+// build project map
+const pmap={};
+projects.forEach(p=>{pmap[p.id]={project:p,entries:projectEntries[p.id]||[],sessions:[]};});
+sessions.forEach(s=>{
+if(s.projectTitle){const p=projects.find(x=>x.title===s.projectTitle);if(p&&pmap[p.id])pmap[p.id].sessions.push(s);}
+});
+const hasProjects=Object.values(pmap).some(p=>p.entries.length||p.sessions.length);
+const freeSessions=sessions.filter(s=>!s.projectTitle);
+
+let html=`<div class="ec-header"><div class="ec-badge">功课</div><div class="ec-date">${dateStr}</div><div class="ec-rule"></div></div>`;
+
+if(hasSenses){
+html+=`<div class="ec-section-label">感知 · Noticing</div>`;
+SENSES.forEach(s=>{
+const entries=(senseLog[s]||[]).filter(e=>e.text);
+if(!entries.length)return;
+html+=`<div style="margin-bottom:18px"><div class="ec-sense-row"><span class="ec-sense-title">${SENSE_ZH[s]}</span><span class="ec-sense-sub">${s}</span></div>`;
+entries.forEach(e=>{
+html+=`<div class="ec-entry"><div class="ec-entry-text">${e.text}</div>${e.location?`<div class="ec-entry-loc">${e.location}</div>`:""}</div>`;
+});
+html+=”</div>”;
 });
 }
 
-// Projects
-const projectMap = {};
-projects.forEach(p => { projectMap[p.id] = { project: p, entries: projectEntries[p.id] || [], sessions: [] }; });
-sessions.forEach(s => {
-if (s.projectTitle) {
-const p = projects.find(x => x.title === s.projectTitle);
-if (p && projectMap[p.id]) projectMap[p.id].sessions.push(s);
-}
-});
-const hasProjects = Object.values(projectMap).some(p => p.entries.length || p.sessions.length);
-if (hasProjects) {
-out += `进行中 · Projects\n\n`;
-Object.values(projectMap).forEach(({ project: p, entries, sessions: ps }) => {
-if (!entries.length && !ps.length) return;
-out += `【${p.title}】\n\n`;
-entries.forEach(e => { out += `${e.savedAt}\n${e.text}\n\n`; });
-ps.forEach(s => { out += `${s.savedAt}  ${s.exerciseTitle}  (${fmt(s.duration)})\n${s.text}\n\n`; });
+if(hasProjects){
+if(hasSenses)html+=`<div class="ec-divider"></div>`;
+html+=`<div class="ec-section-label">进行中 · Projects</div>`;
+Object.values(pmap).forEach(({project:p,entries,sessions:ps})=>{
+if(!entries.length&&!ps.length)return;
+const ag=getAgeStyle(p.createdAt,p.expiresAt);
+html+=`<div style="margin-bottom:28px"> <div class="ec-proj-head"><div class="ec-proj-dot" style="background:${ag.accent}"></div><div class="ec-proj-name" style="color:${ag.accent}">${p.title}</div><div class="ec-proj-line" style="background:${ag.border}"></div></div>`;
+entries.forEach(e=>{html+=`<div style="margin-bottom:14px"><div class="ec-entry-time">${e.savedAt}</div><div class="ec-entry-body">${e.text}</div></div>`;});
+ps.forEach(s=>{html+=`<div style="margin-bottom:14px"><div class="ec-session-meta">${s.exerciseTitle} · ${s.savedAt} · ${fmt(s.duration)}</div><div class="ec-entry-body">${s.text}</div></div>`;});
+html+=”</div>”;
 });
 }
 
-const freeSessions = sessions.filter(s => !s.projectTitle);
-if (freeSessions.length) {
-out += `练习 · Practice\n\n`;
-freeSessions.forEach(s => {
-out += `${s.exerciseTitle}${s.author ? ` — ${s.author}` : ""}  ${s.savedAt}  (${fmt(s.duration)})\n`;
-out += `${s.text}\n\n`;
+if(freeSessions.length){
+if(hasSenses||hasProjects)html+=`<div class="ec-divider"></div>`;
+html+=`<div class="ec-section-label">练习 · Practice</div>`;
+freeSessions.forEach(s=>{
+html+=`<div style="margin-bottom:24px"> <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span class="ec-ex-title">${s.exerciseTitle}</span>${s.author?`<span class="ec-ex-author">— ${s.author}</span>`:""}</div> <div class="ec-session-time">${s.savedAt} · ${fmt(s.duration)}</div> <div class="ec-session-body">${s.text}</div></div>`;
 });
 }
 
+html+=`<div class="ec-footer"><div class="ec-footer-rule"></div><div class="ec-footer-mark">功课</div></div>`;
+return html;
+}
+
+function buildPlainText(){
+const date=new Date().toLocaleDateString(“zh-CN”,{year:“numeric”,month:“long”,day:“numeric”,weekday:“long”});
+let out=`功课  ${date}\n${"─".repeat(28)}\n\n`;
+const hasSenses=SENSES.some(s=>(senseLog[s]||[]).some(e=>e.text));
+if(hasSenses){
+out+=“感知 · Noticing\n\n”;
+SENSES.forEach(s=>{
+const entries=(senseLog[s]||[]).filter(e=>e.text);
+if(!entries.length)return;
+out+=`${SENSE_ZH[s]} · ${s}\n`;
+entries.forEach(e=>{out+=`  ${e.text}${e.location?" ("+e.location+")":""}\n`;});
+out+=”\n”;
+});
+}
+const pmap={};
+projects.forEach(p=>{pmap[p.id]={project:p,entries:projectEntries[p.id]||[],sessions:[]};});
+sessions.forEach(s=>{if(s.projectTitle){const p=projects.find(x=>x.title===s.projectTitle);if(p&&pmap[p.id])pmap[p.id].sessions.push(s);}});
+const hasProjects=Object.values(pmap).some(p=>p.entries.length||p.sessions.length);
+if(hasProjects){
+out+=“进行中 · Projects\n\n”;
+Object.values(pmap).forEach(({project:p,entries,sessions:ps})=>{
+if(!entries.length&&!ps.length)return;
+out+=`【${p.title}】\n\n`;
+entries.forEach(e=>{out+=`${e.savedAt}\n${e.text}\n\n`;});
+ps.forEach(s=>{out+=`${s.savedAt}  ${s.exerciseTitle}  (${fmt(s.duration)})\n${s.text}\n\n`;});
+});
+}
+const free=sessions.filter(s=>!s.projectTitle);
+if(free.length){
+out+=“练习 · Practice\n\n”;
+free.forEach(s=>{out+=`${s.exerciseTitle}${s.author?" — "+s.author:""}  ${s.savedAt}  (${fmt(s.duration)})\n${s.text}\n\n`;});
+}
 return out.trim();
 }
 
-// ── EXPORT VISUAL VIEW ────────────────────────────────────────
-
-function ExportView({ senseLog, projects, sessions, projectEntries }) {
-const dateStr = new Date().toLocaleDateString(“zh-CN”, { year: “numeric”, month: “long”, day: “numeric”, weekday: “long” });
-const hasSenses = SENSES.some(s => senseLog[s]?.some(e => e.text));
-
-const projectMap = {};
-projects.forEach(p => { projectMap[p.id] = { project: p, entries: projectEntries[p.id] || [], sessions: [] }; });
-sessions.forEach(s => {
-if (s.projectTitle) {
-const p = projects.find(x => x.title === s.projectTitle);
-if (p && projectMap[p.id]) projectMap[p.id].sessions.push(s);
+function switchTab(tab){
+exportTab=tab;
+document.querySelectorAll(”.sheet-tab”).forEach(b=>b.classList.toggle(“active”,b.dataset.tab===tab));
+document.getElementById(“tab-preview”).style.display=tab===“preview”?“block”:“none”;
+document.getElementById(“tab-image”).style.display=tab===“image”?“block”:“none”;
+document.getElementById(“tab-text”).style.display=tab===“text”?“block”:“none”;
+const actionBtn=document.getElementById(“sheet-action-btn”);
+const hint=document.getElementById(“sheet-hint”);
+if(tab===“preview”){actionBtn.style.display=“block”;actionBtn.textContent=“生成长图”;actionBtn.classList.remove(“done”);hint.style.display=“none”;}
+else if(tab===“image”){
+if(exportImg){actionBtn.style.display=“none”;hint.style.display=“block”;hint.textContent=“长按图片 → 存储到相册”;}
+else{actionBtn.style.display=“block”;actionBtn.textContent=“生成长图”;actionBtn.classList.remove(“done”);hint.style.display=“none”;}
 }
+else if(tab===“text”){actionBtn.style.display=“block”;actionBtn.textContent=“复制全文”;actionBtn.classList.remove(“done”);hint.style.display=“none”;}
+}
+
+document.querySelectorAll(”.sheet-tab”).forEach(btn=>{
+btn.addEventListener(“click”,()=>switchTab(btn.dataset.tab));
 });
-const hasProjects = Object.values(projectMap).some(p => p.entries.length || p.sessions.length);
-const freeSessions = sessions.filter(s => !s.projectTitle);
-const hasFree = freeSessions.length > 0;
 
-const Divider = () => (
-<div style={{ width: “100%”, height: 1, background: “linear-gradient(to right, transparent, #c8b898, transparent)”, margin: “22px 0” }} />
-);
-
-return (
-<div style={{ background: “#f8f3ea”, fontFamily: “‘Cormorant Garamond’, Georgia, serif”, color: C.ink, padding: “36px 28px 44px” }}>
-<div style={{ textAlign: “center”, marginBottom: 30 }}>
-<div style={{ fontSize: 11, letterSpacing: “0.32em”, color: C.faint, textTransform: “uppercase”, marginBottom: 10 }}>功课</div>
-<div style={{ fontSize: 15, color: C.mid, fontStyle: “italic” }}>{dateStr}</div>
-<div style={{ width: 36, height: 1, background: C.rule, margin: “16px auto 0” }} />
-</div>
-
-```
-  {hasSenses && (
-    <div>
-      <div style={{ fontSize: 9, letterSpacing: "0.28em", color: C.faint, textTransform: "uppercase", textAlign: "center", marginBottom: 18 }}>感知 · Noticing</div>
-      {SENSES.map(s => {
-        const entries = senseLog[s]?.filter(e => e.text) || [];
-        if (!entries.length) return null;
-        return (
-          <div key={s} style={{ marginBottom: 18 }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 14, fontFamily: "'Noto Serif SC', serif" }}>{SENSE_ZH[s]}</span>
-              <span style={{ fontSize: 9, letterSpacing: "0.16em", color: C.faint, textTransform: "uppercase" }}>{s}</span>
-            </div>
-            {entries.map((e, i) => (
-              <div key={i} style={{ paddingLeft: 12, borderLeft: `1px solid ${C.rule}`, marginBottom: 8 }}>
-                <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.75 }}>{e.text}</div>
-                {e.location && <div style={{ fontSize: 11, color: C.faint, fontStyle: "italic", marginTop: 2 }}>{e.location}</div>}
-              </div>
-            ))}
-          </div>
-        );
-      })}
-    </div>
-  )}
-
-  {hasProjects && (
-    <React.Fragment>
-      {hasSenses && <Divider />}
-      <div style={{ fontSize: 9, letterSpacing: "0.28em", color: C.faint, textTransform: "uppercase", textAlign: "center", marginBottom: 20 }}>进行中 · Projects</div>
-      {Object.values(projectMap).map(({ project: p, entries, sessions: ps }) => {
-        if (!entries.length && !ps.length) return null;
-        const ag = getAgeStyle(p.createdAt, p.expiresAt);
-        return (
-          <div key={p.id} style={{ marginBottom: 28 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: ag.accent, flexShrink: 0 }} />
-              <div style={{ fontSize: 16, fontFamily: "'Noto Serif SC', serif", color: ag.accent }}>{p.title}</div>
-              <div style={{ flex: 1, height: 1, background: ag.border }} />
-            </div>
-            {entries.map((e, i) => (
-              <div key={i} style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 10, color: C.faint, marginBottom: 5, paddingLeft: 16 }}>{e.savedAt}</div>
-                <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.85, whiteSpace: "pre-wrap", paddingLeft: 16 }}>{e.text}</div>
-              </div>
-            ))}
-            {ps.map(s => (
-              <div key={s.id} style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 10, color: C.faint, paddingLeft: 16, marginBottom: 5, display: "flex", gap: 8 }}>
-                  <span style={{ fontStyle: "italic" }}>{s.exerciseTitle}</span>
-                  <span>·</span><span>{s.savedAt}</span><span>·</span><span>{fmt(s.duration)}</span>
-                </div>
-                <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.85, whiteSpace: "pre-wrap", paddingLeft: 16 }}>{s.text}</div>
-              </div>
-            ))}
-          </div>
-        );
-      })}
-    </React.Fragment>
-  )}
-
-  {hasFree && (
-    <React.Fragment>
-      {(hasSenses || hasProjects) && <Divider />}
-      <div style={{ fontSize: 9, letterSpacing: "0.28em", color: C.faint, textTransform: "uppercase", textAlign: "center", marginBottom: 20 }}>练习 · Practice</div>
-      {freeSessions.map(s => (
-        <div key={s.id} style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
-            <span style={{ fontSize: 15, fontStyle: "italic" }}>{s.exerciseTitle}</span>
-            {s.author && <span style={{ fontSize: 10, color: C.faint }}>— {s.author}</span>}
-          </div>
-          <div style={{ fontSize: 10, color: C.faint, marginBottom: 8, display: "flex", gap: 8 }}>
-            <span>{s.savedAt}</span><span>·</span><span>{fmt(s.duration)}</span>
-          </div>
-          <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.85, whiteSpace: "pre-wrap", borderLeft: `1px solid ${C.rule}`, paddingLeft: 14 }}>{s.text}</div>
-        </div>
-      ))}
-    </React.Fragment>
-  )}
-
-  <div style={{ textAlign: "center", marginTop: 36 }}>
-    <div style={{ width: 24, height: 1, background: C.rule, margin: "0 auto 10px" }} />
-    <div style={{ fontSize: 9, letterSpacing: "0.3em", color: C.faint, textTransform: "uppercase" }}>功课</div>
-  </div>
-</div>
-```
-
-);
-}
-
-// ── MAIN APP ──────────────────────────────────────────────────
-
-function Gongke() {
-const [senseLog, setSenseLog] = React.useState(() => {
-try { return JSON.parse(localStorage.getItem(“gk_sense”)) || EMPTY_SENSE; }
-catch { return EMPTY_SENSE; }
+document.getElementById(“export-btn”).addEventListener(“click”,()=>{
+exportImg=null;exportTab=“preview”;
+document.getElementById(“export-card”).innerHTML=buildExportCard();
+document.getElementById(“export-text-area”).value=buildPlainText();
+document.getElementById(“export-img-wrap”).style.display=“none”;
+document.getElementById(“tab-image-placeholder”).style.display=“block”;
+document.getElementById(“export-modal”).style.display=“flex”;
+switchTab(“preview”);
 });
-const [projects, setProjects] = React.useState(() => {
-try { return JSON.parse(localStorage.getItem(“gk_projects”)) || []; }
-catch { return []; }
-});
-const [sessions, setSessions] = React.useState(() => {
-try { return JSON.parse(localStorage.getItem(“gk_sessions”)) || []; }
-catch { return []; }
-});
-const [projectEntries, setProjectEntries] = React.useState(() => {
-try { return JSON.parse(localStorage.getItem(“gk_pentries”)) || {}; }
-catch { return {}; }
-});
-const [projectDrafts, setProjectDrafts] = React.useState({});
+document.getElementById(“export-close”).addEventListener(“click”,()=>{document.getElementById(“export-modal”).style.display=“none”;});
+document.getElementById(“export-modal”).addEventListener(“click”,function(e){if(e.target===this)this.style.display=“none”;});
 
-const [selectedTime, setSelectedTime] = React.useState(null);
-const [exercise, setExercise] = React.useState(null);
-const [practiceText, setPracticeText] = React.useState(””);
-const [activeProject, setActiveProject] = React.useState(null);
-const [timerSec, setTimerSec] = React.useState(0);
-const [timerOn, setTimerOn] = React.useState(false);
-const [showForm, setShowForm] = React.useState(false);
-const [newTitle, setNewTitle] = React.useState(””);
-const [newDays, setNewDays] = React.useState(7);
-const [expandedProject, setExpandedProject] = React.useState(null);
-const [savedProjectIds, setSavedProjectIds] = React.useState({});
-const [savedSession, setSavedSession] = React.useState(false);
-const [showExport, setShowExport] = React.useState(false);
-const [exportMode, setExportMode] = React.useState(“preview”); // “preview” | “image” | “text”
-const [exportImg, setExportImg] = React.useState(null);
-const [generating, setGenerating] = React.useState(false);
-const [copied, setCopied] = React.useState(false);
-const [showNewDay, setShowNewDay] = React.useState(false);
-const timerRef = React.useRef(null);
-const exportRef = React.useRef(null);
-
-const todayStr = new Date().toLocaleDateString(“zh-CN”, { year: “numeric”, month: “long”, day: “numeric”, weekday: “long” });
-
-React.useEffect(() => { localStorage.setItem(“gk_sense”, JSON.stringify(senseLog)); }, [senseLog]);
-React.useEffect(() => {
-const alive = projects.filter(p => p.expiresAt > Date.now());
-if (alive.length !== projects.length) setProjects(alive);
-else localStorage.setItem(“gk_projects”, JSON.stringify(projects));
-}, [projects]);
-React.useEffect(() => { localStorage.setItem(“gk_sessions”, JSON.stringify(sessions)); }, [sessions]);
-React.useEffect(() => { localStorage.setItem(“gk_pentries”, JSON.stringify(projectEntries)); }, [projectEntries]);
-
-React.useEffect(() => {
-if (timerOn) timerRef.current = setInterval(() => setTimerSec(s => s + 1), 1000);
-else clearInterval(timerRef.current);
-return () => clearInterval(timerRef.current);
-}, [timerOn]);
-
-function startNewDay() {
-setSenseLog(EMPTY_SENSE);
-setSessions([]);
-setProjectEntries({});
-setProjectDrafts({});
-setSelectedTime(null); setExercise(null); setPracticeText(””);
-setTimerSec(0); setTimerOn(false); setActiveProject(null);
-setExpandedProject(null); setShowNewDay(false);
-localStorage.setItem(“gk_sense”, JSON.stringify(EMPTY_SENSE));
-localStorage.setItem(“gk_sessions”, JSON.stringify([]));
-localStorage.setItem(“gk_pentries”, JSON.stringify({}));
-}
-
-function pickTime(t) {
-setSelectedTime(t);
-const pool = EXERCISES[t];
-setExercise(pool[Math.floor(Math.random() * pool.length)]);
-setTimerSec(0); setTimerOn(true); setActiveProject(null); setPracticeText(””); setSavedSession(false);
-}
-
-function saveSession() {
-if (!practiceText.trim()) return;
-setSessions(prev => […prev, { id: Date.now(), exerciseTitle: exercise?.title || “”, author: exercise?.author || “”, projectTitle: activeProject?.title || “”, text: practiceText, duration: timerSec, savedAt: new Date().toLocaleTimeString(“zh-CN”, { hour: “2-digit”, minute: “2-digit” }) }]);
-setSavedSession(true); setTimerOn(false);
-setTimeout(() => { setPracticeText(””); setSelectedTime(null); setExercise(null); setTimerSec(0); setActiveProject(null); setSavedSession(false); }, 1200);
-}
-
-function saveProjectEntry(pid) {
-const draft = projectDrafts[pid]?.trim();
-if (!draft) return;
-setProjectEntries(prev => ({ …prev, [pid]: […(prev[pid] || []), { id: Date.now(), text: draft, savedAt: new Date().toLocaleTimeString(“zh-CN”, { hour: “2-digit”, minute: “2-digit” }) }] }));
-setProjectDrafts(prev => ({ …prev, [pid]: “” }));
-setSavedProjectIds(prev => ({ …prev, [pid]: true }));
-setTimeout(() => setSavedProjectIds(prev => ({ …prev, [pid]: false })), 1400);
-}
-
-function addEntry(sense) {
-setSenseLog(prev => ({ …prev, [sense]: […prev[sense], { id: Date.now(), text: “”, location: “” }] }));
-}
-function updateEntry(sense, id, field, val) {
-setSenseLog(prev => ({ …prev, [sense]: prev[sense].map(e => e.id === id ? { …e, [field]: val } : e) }));
-}
-function addProject() {
-if (!newTitle.trim()) return;
-setProjects(prev => […prev, { id: Date.now(), title: newTitle.trim(), createdAt: Date.now(), expiresAt: Date.now() + newDays * 86400000 }]);
-setNewTitle(””); setNewDays(7); setShowForm(false);
-}
-
-async function generateLongImage() {
-setGenerating(true); setExportImg(null); setExportMode(“image”);
-try {
-const h2c = await loadH2C();
-await new Promise(r => setTimeout(r, 300));
-const node = exportRef.current;
-const canvas = await h2c(node, {
-backgroundColor: “#f8f3ea”, scale: 2, useCORS: true, allowTaint: true, logging: false,
-width: node.offsetWidth, height: node.scrollHeight,
-});
-setExportImg(canvas.toDataURL(“image/png”));
-} catch(e) { console.error(e); setExportMode(“preview”); }
-setGenerating(false);
-}
-
-function doCopy() {
-const text = buildText(senseLog, projects, sessions, projectEntries);
-if (navigator.clipboard) {
-navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+document.getElementById(“sheet-action-btn”).addEventListener(“click”,function(){
+if(exportTab===“preview”||exportTab===“image”){
+// generate image
+switchTab(“image”);
+this.textContent=“生成中…”;this.disabled=true;
+const script=document.createElement(“script”);
+script.src=“https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js”;
+script.onload=()=>{
+const node=document.getElementById(“export-card”);
+window.html2canvas(node,{backgroundColor:”#f8f3ea”,scale:2,useCORS:true,allowTaint:true,logging:false,width:node.offsetWidth,height:node.scrollHeight}).then(canvas=>{
+exportImg=canvas.toDataURL(“image/png”);
+document.getElementById(“export-img”).src=exportImg;
+document.getElementById(“export-img-wrap”).style.display=“block”;
+document.getElementById(“tab-image-placeholder”).style.display=“none”;
+document.getElementById(“sheet-action-btn”).style.display=“none”;
+document.getElementById(“sheet-hint”).style.display=“block”;
+document.getElementById(“sheet-hint”).textContent=“长按图片 → 存储到相册”;
+document.getElementById(“sheet-action-btn”).disabled=false;
+}).catch(err=>{console.error(err);document.getElementById(“sheet-action-btn”).textContent=“生成长图”;document.getElementById(“sheet-action-btn”).disabled=false;});
+};
+script.onerror=()=>{this.textContent=“生成长图”;this.disabled=false;};
+if(!window.html2canvas)document.head.appendChild(script);
+else script.onload();
+} else if(exportTab===“text”){
+const text=document.getElementById(“export-text-area”).value;
+if(navigator.clipboard){
+navigator.clipboard.writeText(text).then(()=>{this.textContent=“✓ 已复制”;this.classList.add(“done”);setTimeout(()=>{this.textContent=“复制全文”;this.classList.remove(“done”);},2000);});
 } else {
-const ta = document.createElement(“textarea”);
-ta.value = text; ta.style.position = “fixed”; ta.style.opacity = “0”;
-document.body.appendChild(ta); ta.select(); document.execCommand(“copy”);
-document.body.removeChild(ta);
-setCopied(true); setTimeout(() => setCopied(false), 2000);
+const ta=document.createElement(“textarea”);ta.value=text;ta.style.cssText=“position:fixed;opacity:0;”;
+document.body.appendChild(ta);ta.select();document.execCommand(“copy”);document.body.removeChild(ta);
+this.textContent=“✓ 已复制”;this.classList.add(“done”);setTimeout(()=>{this.textContent=“复制全文”;this.classList.remove(“done”);},2000);
 }
 }
-
-const tabBtn = (mode, label) => (
-<button onClick={() => { setExportMode(mode); if (mode !== “image”) setExportImg(null); }}
-style={{ flex: 1, background: exportMode === mode ? C.accent : “transparent”, border: `1px solid ${exportMode === mode ? C.accent : C.rule}`, borderRadius: 4, padding: “8px 0”, fontSize: 11, color: exportMode === mode ? C.bg : C.faint, cursor: “pointer”, letterSpacing: “0.06em” }}>
-{label}
-</button>
-);
-
-return (
-<div style={{ fontFamily: “‘Cormorant Garamond’, Georgia, serif”, color: C.ink, background: C.bg, minHeight: “100vh”, maxWidth: 480, margin: “0 auto”, paddingBottom: 80 }}>
-
-```
-  {/* HEADER */}
-  <div style={{ padding: "44px 24px 20px", borderBottom: `1px solid ${C.rule}` }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-      <div>
-        <div style={{ fontSize: 52, fontFamily: "'Noto Serif SC', serif", fontWeight: 300, letterSpacing: "0.06em", lineHeight: 1 }}>功课</div>
-        <div style={{ fontSize: 13, color: C.faint, marginTop: 8, fontStyle: "italic", letterSpacing: "0.06em" }}>{todayStr}</div>
-      </div>
-      <button onClick={() => setShowNewDay(true)}
-        style={{ background: "none", border: `1px solid ${C.rule}`, borderRadius: 6, padding: "8px 14px", fontSize: 12, color: C.faint, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", marginTop: 6, letterSpacing: "0.06em", lineHeight: 1.4 }}>
-        新的<br/>一天
-      </button>
-    </div>
-  </div>
-
-  {/* ZONE 1 */}
-  <div style={{ padding: "24px 24px 28px", borderBottom: `1px solid ${C.rule}` }}>
-    <div style={sLabel}>感知 · Noticing</div>
-    <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6 }}>
-      {SENSES.map(s => (
-        <div key={s} style={{ minWidth: 138, flex: "0 0 138px" }}>
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ fontSize: 17, fontFamily: "'Noto Serif SC', serif" }}>{SENSE_ZH[s]}</div>
-            <div style={{ fontSize: 10, color: C.faint, letterSpacing: "0.14em", textTransform: "uppercase" }}>{s}</div>
-          </div>
-          {senseLog[s].map(entry => (
-            <div key={entry.id} style={{ marginBottom: 8 }}>
-              <textarea value={entry.text} onChange={e => updateEntry(s, entry.id, "text", e.target.value)} placeholder="noticed…" rows={3}
-                style={{ ...inp, width: "100%", background: C.card, border: `1px solid ${C.rule}`, borderRadius: 4, padding: "6px 8px", fontSize: 13, resize: "none", lineHeight: 1.6 }} />
-              <input value={entry.location} onChange={e => updateEntry(s, entry.id, "location", e.target.value)} placeholder="where"
-                style={{ ...inp, width: "100%", borderBottom: `1px solid ${C.rule}`, padding: "2px 0", fontSize: 11, color: C.faint, fontStyle: "italic" }} />
-            </div>
-          ))}
-          <button onClick={() => addEntry(s)} style={{ width: "100%", background: "none", border: `1px dashed ${C.rule}`, borderRadius: 4, color: C.faint, fontSize: 18, padding: "3px 0", cursor: "pointer" }}>+</button>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  {/* ZONE 2 */}
-  <div style={{ padding: "24px 24px 28px", borderBottom: `1px solid ${C.rule}` }}>
-    <div style={sLabel}>进行中 · Projects</div>
-    <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6, alignItems: "flex-start" }}>
-      {projects.map(p => {
-        const ag = getAgeStyle(p.createdAt, p.expiresAt);
-        const daysLeft = Math.ceil((p.expiresAt - Date.now()) / 86400000);
-        const isOpen = expandedProject === p.id;
-        const entryCount = (projectEntries[p.id] || []).length;
-        return (
-          <div key={p.id} onClick={() => setExpandedProject(isOpen ? null : p.id)}
-            style={{ minWidth: 118, flex: "0 0 118px", background: ag.bg, border: `1px solid ${isOpen ? ag.accent : ag.border}`, borderRadius: 6, padding: "12px 10px", cursor: "pointer", animation: ag.pulse ? "pulse 2s ease-in-out infinite" : "none", transition: "border-color 0.2s" }}>
-            <div style={{ fontSize: 13, fontFamily: "'Noto Serif SC', serif", color: ag.accent, lineHeight: 1.4, marginBottom: 6, wordBreak: "break-all" }}>{p.title}</div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div style={{ fontSize: 10, color: ag.accent, opacity: 0.65 }}>{daysLeft}d left</div>
-              {entryCount > 0 && <div style={{ fontSize: 10, color: ag.accent, opacity: 0.55 }}>{entryCount} notes</div>}
-            </div>
-          </div>
-        );
-      })}
-      <button onClick={() => setShowForm(true)} style={{ minWidth: 80, flex: "0 0 80px", background: "transparent", border: `1px dashed ${C.rule}`, borderRadius: 6, padding: "12px 8px", color: C.faint, fontSize: 12, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", lineHeight: 1.5 }}>+ 新项目</button>
-    </div>
-
-    {expandedProject && (() => {
-      const p = projects.find(x => x.id === expandedProject);
-      if (!p) return null;
-      const ag = getAgeStyle(p.createdAt, p.expiresAt);
-      const isSaved = savedProjectIds[p.id];
-      const entries = projectEntries[p.id] || [];
-      const draft = projectDrafts[p.id] || "";
-      return (
-        <div style={{ marginTop: 14, background: C.card, border: `1px solid ${ag.border}`, borderRadius: 8, overflow: "hidden" }}>
-          {entries.length > 0 && (
-            <div style={{ borderBottom: `1px solid ${C.rule}`, padding: "14px 18px", maxHeight: 180, overflowY: "auto" }}>
-              <div style={{ fontSize: 9, letterSpacing: "0.2em", color: C.faint, textTransform: "uppercase", marginBottom: 10 }}>今日已写</div>
-              {entries.map((e, i) => (
-                <div key={e.id} style={{ marginBottom: i < entries.length - 1 ? 12 : 0 }}>
-                  <div style={{ fontSize: 10, color: C.faint, marginBottom: 3 }}>{e.savedAt}</div>
-                  <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.7, whiteSpace: "pre-wrap", opacity: 0.85 }}>
-                    {e.text.length > 100 ? e.text.slice(0, 100) + "…" : e.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          <div style={{ padding: 18 }}>
-            <div style={{ fontSize: 10, color: C.faint, letterSpacing: "0.14em", marginBottom: 10, fontStyle: "italic" }}>
-              {entries.length > 0 ? "继续写 —" : p.title}
-            </div>
-            <textarea value={draft} onChange={e => setProjectDrafts(prev => ({ ...prev, [p.id]: e.target.value }))}
-              placeholder="write here…" rows={6}
-              style={{ ...inp, width: "100%", fontSize: 15, lineHeight: 1.85, resize: "vertical", borderBottom: `1px solid ${C.rule}`, paddingBottom: 12, marginBottom: 12 }} />
-            <button onClick={() => saveProjectEntry(p.id)} style={{ background: isSaved ? "#3d5a38" : C.accent, color: C.bg, border: "none", borderRadius: 4, padding: "8px 22px", fontSize: 13, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", transition: "background 0.3s" }}>
-              {isSaved ? "✓ 已保存" : "保存"}
-            </button>
-          </div>
-        </div>
-      );
-    })()}
-
-    {showForm && (
-      <div style={{ marginTop: 16, background: C.card, border: `1px solid ${C.rule}`, borderRadius: 8, padding: 18 }}>
-        <input autoFocus value={newTitle} onChange={e => setNewTitle(e.target.value)} onKeyDown={e => e.key === "Enter" && addProject()} placeholder="项目名称"
-          style={{ ...inp, width: "100%", borderBottom: `1px solid ${C.rule}`, padding: "6px 0", fontSize: 17, fontFamily: "'Noto Serif SC', serif", marginBottom: 14 }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-          <span style={{ fontSize: 11, color: C.faint, fontStyle: "italic" }}>到期</span>
-          {[3, 7, 14].map(d => (
-            <button key={d} onClick={() => setNewDays(d)} style={{ background: newDays === d ? C.accent : "transparent", border: `1px solid ${newDays === d ? C.accent : C.rule}`, borderRadius: 4, padding: "4px 12px", fontSize: 12, color: newDays === d ? C.bg : C.faint, cursor: "pointer" }}>{d}天</button>
-          ))}
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={addProject} style={{ background: C.accent, color: C.bg, border: "none", borderRadius: 4, padding: "8px 22px", fontSize: 13, cursor: "pointer", fontFamily: "'Noto Serif SC', serif" }}>添加</button>
-          <button onClick={() => setShowForm(false)} style={{ background: "transparent", color: C.faint, border: `1px solid ${C.rule}`, borderRadius: 4, padding: "8px 16px", fontSize: 13, cursor: "pointer" }}>取消</button>
-        </div>
-      </div>
-    )}
-  </div>
-
-  {/* ZONE 3 */}
-  <div style={{ padding: "24px 24px 28px", borderBottom: `1px solid ${C.rule}` }}>
-    <div style={{ ...sLabel, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span>练习 · Practice</span>
-      {sessions.length > 0 && <span style={{ fontSize: 11, fontStyle: "italic" }}>{sessions.length} saved today</span>}
-    </div>
-    <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-      {[2, 10, 60].map(t => (
-        <button key={t} onClick={() => pickTime(t)} style={{ flex: 1, background: selectedTime === t ? C.accent : "transparent", border: `1px solid ${selectedTime === t ? C.accent : C.rule}`, borderRadius: 6, padding: "14px 4px", cursor: "pointer", lineHeight: 1.2 }}>
-          <div style={{ fontSize: 30, color: selectedTime === t ? C.bg : C.mid, fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}>{t}</div>
-          <div style={{ fontSize: 10, color: selectedTime === t ? "rgba(244,239,229,0.6)" : C.faint, letterSpacing: "0.14em", textTransform: "uppercase" }}>min</div>
-        </button>
-      ))}
-    </div>
-
-    {exercise && (
-      <div style={{ background: C.card, border: `1px solid ${C.rule}`, borderRadius: 8, padding: 20 }}>
-        <div style={{ fontSize: 10, letterSpacing: "0.2em", color: C.faint, textTransform: "uppercase", marginBottom: 4 }}>{exercise.author}</div>
-        <div style={{ fontSize: 21, fontStyle: "italic", color: C.ink, marginBottom: 12 }}>{exercise.title}</div>
-        <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.75, borderLeft: `2px solid ${C.rule}`, paddingLeft: 14, marginBottom: 18 }}>{exercise.instruction}</div>
-        {projects.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 10, color: C.faint, fontStyle: "italic", letterSpacing: "0.14em", marginBottom: 8 }}>or work on —</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {projects.map(p => (
-                <button key={p.id} onClick={() => setActiveProject(activeProject?.id === p.id ? null : p)}
-                  style={{ background: activeProject?.id === p.id ? C.accent : "transparent", border: `1px solid ${activeProject?.id === p.id ? C.accent : C.rule}`, borderRadius: 4, padding: "4px 12px", fontSize: 12, color: activeProject?.id === p.id ? C.bg : C.mid, cursor: "pointer", fontFamily: "'Noto Serif SC', serif" }}>{p.title}</button>
-              ))}
-            </div>
-          </div>
-        )}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-          <span style={{ fontSize: 26, fontVariantNumeric: "tabular-nums", color: C.ink }}>{fmt(timerSec)}</span>
-          <button onClick={() => setTimerOn(v => !v)} style={{ background: "none", border: "none", color: C.faint, fontSize: 12, cursor: "pointer", fontStyle: "italic" }}>{timerOn ? "pause" : "resume"}</button>
-          <button onClick={() => { setTimerSec(0); setTimerOn(false); }} style={{ background: "none", border: "none", color: C.faint, fontSize: 11, cursor: "pointer", fontStyle: "italic" }}>reset</button>
-        </div>
-        <textarea value={practiceText} onChange={e => setPracticeText(e.target.value)} placeholder="begin here…"
-          style={{ ...inp, width: "100%", minHeight: 200, borderTop: `1px solid ${C.rule}`, paddingTop: 16, fontSize: 16, lineHeight: 1.85, resize: "vertical" }} />
-        <div style={{ marginTop: 14, display: "flex", gap: 10, alignItems: "center" }}>
-          <button onClick={saveSession} style={{ background: savedSession ? "#3d5a38" : C.accent, color: C.bg, border: "none", borderRadius: 4, padding: "10px 28px", fontSize: 13, cursor: "pointer", fontFamily: "'Noto Serif SC', serif", transition: "background 0.3s" }}>
-            {savedSession ? "✓ 已保存" : "保存练习"}
-          </button>
-          <span style={{ fontSize: 11, color: C.faint, fontStyle: "italic" }}>保存后可再开新练习</span>
-        </div>
-      </div>
-    )}
-
-    {sessions.length > 0 && (
-      <div style={{ marginTop: 20 }}>
-        <div style={{ ...sLabel, marginBottom: 12 }}>今日已保存</div>
-        {sessions.map(s => (
-          <div key={s.id} style={{ borderLeft: `2px solid ${C.rule}`, paddingLeft: 14, marginBottom: 14 }}>
-            <div style={{ fontSize: 11, color: C.faint, marginBottom: 4 }}>{s.savedAt} · {s.exerciseTitle}{s.projectTitle ? ` · ${s.projectTitle}` : ""} · {fmt(s.duration)}</div>
-            <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{s.text.slice(0, 120)}{s.text.length > 120 ? "…" : ""}</div>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-
-  {/* FOOTER */}
-  <div style={{ padding: 24 }}>
-    <button onClick={() => { setShowExport(true); setExportMode("preview"); setExportImg(null); }}
-      style={{ width: "100%", background: C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "16px 0", fontSize: 14, cursor: "pointer", letterSpacing: "0.12em", fontFamily: "'Cormorant Garamond', serif" }}>
-      导出今日 · Export Today
-    </button>
-  </div>
-
-  {/* NEW DAY CONFIRM */}
-  {showNewDay && (
-    <div onClick={() => setShowNewDay(false)}
-      style={{ position: "fixed", inset: 0, background: "rgba(30,24,16,0.72)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div onClick={e => e.stopPropagation()}
-        style={{ background: C.bg, borderRadius: 16, padding: "36px 32px", maxWidth: 320, width: "90%", textAlign: "center" }}>
-        <div style={{ fontSize: 28, fontFamily: "'Noto Serif SC', serif", marginBottom: 12 }}>新的一天</div>
-        <div style={{ fontSize: 14, color: C.mid, lineHeight: 1.75, marginBottom: 28 }}>
-          感知日志、练习记录和项目笔记将全部清空。<br/>
-          项目卡片会保留。<br/><br/>
-          <span style={{ fontStyle: "italic", color: C.faint }}>建议先导出今日存档。</span>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => setShowNewDay(false)}
-            style={{ flex: 1, background: "transparent", border: `1px solid ${C.rule}`, borderRadius: 6, padding: "12px 0", fontSize: 13, color: C.faint, cursor: "pointer" }}>取消</button>
-          <button onClick={startNewDay}
-            style={{ flex: 1, background: C.accent, border: "none", borderRadius: 6, padding: "12px 0", fontSize: 13, color: C.bg, cursor: "pointer", fontFamily: "'Noto Serif SC', serif" }}>确认开始</button>
-        </div>
-      </div>
-    </div>
-  )}
-
-  {/* EXPORT MODAL */}
-  {showExport && (
-    <div onClick={e => { if (e.target === e.currentTarget) setShowExport(false); }}
-      style={{ position: "fixed", inset: 0, background: "rgba(30,24,16,0.78)", zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
-      <div style={{ background: C.bg, borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 480, maxHeight: "92vh", display: "flex", flexDirection: "column" }}>
-
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px 8px", flexShrink: 0 }}>
-          <div style={{ fontSize: 13, fontFamily: "'Noto Serif SC', serif" }}>今日存档</div>
-          <button onClick={() => setShowExport(false)} style={{ background: "none", border: "none", color: C.faint, fontSize: 22, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>
-        </div>
-
-        {/* Three tabs */}
-        <div style={{ display: "flex", gap: 6, padding: "0 24px 16px", flexShrink: 0 }}>
-          {tabBtn("preview", "预览")}
-          {tabBtn("image", generating ? "生成中…" : "长图")}
-          {tabBtn("text", "复制文本")}
-        </div>
-
-        <div style={{ overflowY: "auto", flex: 1, padding: "0 16px 8px" }}>
-
-          {/* Visual preview — always rendered for html2canvas, hidden in text mode */}
-          <div ref={exportRef} style={{ border: `1px solid ${C.rule}`, borderRadius: 12, overflow: "hidden", display: exportMode === "text" ? "none" : (exportImg && exportMode === "image" ? "none" : "block") }}>
-            <ExportView senseLog={senseLog} projects={projects} sessions={sessions} projectEntries={projectEntries} />
-          </div>
-
-          {/* Long image */}
-          {exportMode === "image" && exportImg && (
-            <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${C.rule}` }}>
-              <img src={exportImg} alt="今日存档" style={{ width: "100%", display: "block" }} />
-            </div>
-          )}
-
-          {/* Plain text copy */}
-          {exportMode === "text" && (
-            <div style={{ border: `1px solid ${C.rule}`, borderRadius: 12, overflow: "hidden" }}>
-              <textarea readOnly value={buildText(senseLog, projects, sessions, projectEntries)}
-                style={{ width: "100%", minHeight: 320, background: "#f8f3ea", border: "none", padding: "24px 20px", fontSize: 13, lineHeight: 1.8, color: C.mid, fontFamily: "monospace", resize: "none", outline: "none" }} />
-            </div>
-          )}
-        </div>
-
-        {/* Bottom action */}
-        <div style={{ padding: "12px 24px 32px", flexShrink: 0 }}>
-          {exportMode === "preview" && (
-            <button onClick={() => { setExportMode("image"); generateLongImage(); }}
-              style={{ width: "100%", background: C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "14px 0", fontSize: 13, cursor: "pointer", letterSpacing: "0.1em", fontFamily: "'Cormorant Garamond', serif" }}>
-              生成长图
-            </button>
-          )}
-          {exportMode === "image" && !exportImg && !generating && (
-            <button onClick={generateLongImage}
-              style={{ width: "100%", background: C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "14px 0", fontSize: 13, cursor: "pointer", letterSpacing: "0.1em", fontFamily: "'Cormorant Garamond', serif" }}>
-              生成长图
-            </button>
-          )}
-          {exportMode === "image" && exportImg && (
-            <div style={{ textAlign: "center", fontSize: 11, color: C.faint, fontStyle: "italic" }}>长按图片 → 存储到相册</div>
-          )}
-          {exportMode === "text" && (
-            <button onClick={doCopy}
-              style={{ width: "100%", background: copied ? "#3d5a38" : C.accent, color: C.bg, border: "none", borderRadius: 6, padding: "14px 0", fontSize: 13, cursor: "pointer", letterSpacing: "0.1em", fontFamily: "'Cormorant Garamond', serif", transition: "background 0.3s" }}>
-              {copied ? "✓ 已复制" : "复制全文"}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  )}
-</div>
-```
-
-);
-}
-
-ReactDOM.createRoot(document.getElementById(“root”)).render(<Gongke />);
+});
 </script>
 
 </body>
