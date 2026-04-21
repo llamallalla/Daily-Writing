@@ -172,6 +172,26 @@ width:100%;
     <button class="tbtn" data-t="10"><div class="tnum">10</div><div class="tunit">min</div></button>
     <button class="tbtn" data-t="60"><div class="tnum">60</div><div class="tunit">min</div></button>
   </div>
+  <!-- custom exercise form -->
+  <div id="cex-toggle" style="margin-bottom:16px;">
+    <button id="cex-toggle-btn" style="background:none;border:none;color:#8a7860;font-size:11px;font-style:italic;letter-spacing:.08em;padding:0;text-decoration:underline;text-underline-offset:3px;">+ 添加自定义练习</button>
+  </div>
+  <div id="cex-form" style="display:none;background:rgba(255,255,255,.52);border:1px solid #d8cebc;border-radius:8px;padding:18px;margin-bottom:16px;">
+    <input id="cex-title" placeholder="练习名称" style="width:100%;border-bottom:1px solid #d8cebc;padding:6px 0;font-size:15px;margin-bottom:12px;display:block;"/>
+    <textarea id="cex-instr" placeholder="练习说明…" rows="3" style="width:100%;border:1px solid #d8cebc;border-radius:4px;padding:8px;font-size:13px;line-height:1.6;resize:none;margin-bottom:12px;display:block;background:transparent;"></textarea>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <span style="font-size:11px;color:#8a7860;font-style:italic;">时长</span>
+      <button class="cex-t on" data-ct="2" style="border:1px solid #2a2018;border-radius:4px;padding:4px 12px;font-size:12px;background:#2a2018;color:#f4efe5;">2min</button>
+      <button class="cex-t" data-ct="10" style="border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;background:transparent;color:#8a7860;">10min</button>
+      <button class="cex-t" data-ct="60" style="border:1px solid #d8cebc;border-radius:4px;padding:4px 12px;font-size:12px;background:transparent;color:#8a7860;">60min</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button id="cex-save" style="background:#2a2018;color:#f4efe5;border:none;border-radius:4px;padding:8px 22px;font-size:13px;">保存</button>
+      <button id="cex-cancel" style="background:transparent;color:#8a7860;border:1px solid #d8cebc;border-radius:4px;padding:8px 16px;font-size:13px;">取消</button>
+    </div>
+  </div>
+  <!-- custom exercise list -->
+  <div id="cex-list"></div>
   <div id="excard">
     <div class="ex-auth" id="ex-auth"></div>
     <div class="ex-ttl" id="ex-ttl"></div>
@@ -275,6 +295,7 @@ var projs=ld("gk_p",[]);
 var sess=ld("gk_sess",[]);
 var pents=ld("gk_pe",{});
 var pdrafts={};
+var custEx=ld("gk_cex",[]);
 var selTime=null,curEx=null,activePid=null,expandPid=null,selDays=3;
 var timerSec=0,timerOn=false,timerIv=null;
 var exportTab="prev",exportImgDone=false;
@@ -379,7 +400,17 @@ function renderExpand(){
     b.textContent="✓ 已保存";b.style.background="#3d5a38";
     setTimeout(function(){renderProjs();renderExpand();},900);
   };})(p.id,btn);
-  pw.appendChild(lbl2);pw.appendChild(ta);pw.appendChild(btn);
+  var del=document.createElement("button");
+  del.textContent="删除项目";
+  del.style.cssText="background:none;border:none;color:#c84830;font-size:11px;font-style:italic;margin-top:14px;padding:0;letter-spacing:.06em;";
+  (function(pid){del.onclick=function(){
+    if(!confirm("删除「"+p.title+"」？笔记也会一并清除。"))return;
+    projs=projs.filter(function(x){return x.id!==pid;});
+    delete pents[pid];delete pdrafts[pid];
+    sv("gk_p",projs);sv("gk_pe",pents);
+    expandPid=null;renderProjs();renderExpand();
+  };})(p.id);
+  pw.appendChild(lbl2);pw.appendChild(ta);pw.appendChild(btn);pw.appendChild(del);
   box.appendChild(pw);wrap.innerHTML="";wrap.appendChild(box);
 }
 renderProjs();renderExpand();
@@ -413,7 +444,9 @@ function renderPTags(){
 function pickEx(t){
   selTime=t;
   document.querySelectorAll(".tbtn").forEach(function(b){b.classList.toggle("on",parseInt(b.getAttribute("data-t"))===t);});
-  var pool=EX[t];curEx=pool[Math.floor(Math.random()*pool.length)];
+  var pool=EX[t].slice();
+  custEx.forEach(function(e){if(e.t===t)pool.push(e);});
+  curEx=pool[Math.floor(Math.random()*pool.length)];
   document.getElementById("ex-auth").textContent=curEx.author;
   document.getElementById("ex-ttl").textContent=curEx.title;
   document.getElementById("ex-instr").textContent=curEx.instruction;
@@ -463,7 +496,54 @@ function renderSessList(){
 }
 renderSessList();
 
-// NEW DAY
+// CUSTOM EXERCISES
+var selCexT=2;
+function renderCexList(){
+  var list=document.getElementById("cex-list");
+  if(!custEx.length){list.innerHTML="";return;}
+  list.innerHTML="";
+  custEx.forEach(function(e,i){
+    var row=document.createElement("div");
+    row.style.cssText="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #d8cebc;";
+    var info=document.createElement("div");
+    var ttl=document.createElement("div");ttl.style.cssText="font-size:13px;font-style:italic;color:#1e1810;margin-bottom:2px;";ttl.textContent=e.title;
+    var sub=document.createElement("div");sub.style.cssText="font-size:10px;color:#8a7860;";sub.textContent=e.t+"min";
+    info.appendChild(ttl);info.appendChild(sub);
+    var del=document.createElement("button");
+    del.textContent="删";del.style.cssText="background:none;border:none;color:#c84830;font-size:11px;cursor:pointer;padding:0;margin-left:10px;flex-shrink:0;";
+    (function(idx){del.onclick=function(){custEx.splice(idx,1);sv("gk_cex",custEx);renderCexList();};})(i);
+    row.appendChild(info);row.appendChild(del);list.appendChild(row);
+  });
+}
+renderCexList();
+
+document.getElementById("cex-toggle-btn").onclick=function(){
+  var f=document.getElementById("cex-form");
+  f.style.display=f.style.display==="none"?"block":"none";
+};
+document.getElementById("cex-cancel").onclick=function(){document.getElementById("cex-form").style.display="none";};
+
+document.querySelectorAll(".cex-t").forEach(function(b){
+  b.onclick=function(){
+    selCexT=parseInt(b.getAttribute("data-ct"));
+    document.querySelectorAll(".cex-t").forEach(function(x){
+      x.style.background="transparent";x.style.color="#8a7860";x.style.borderColor="#d8cebc";
+    });
+    b.style.background="#2a2018";b.style.color="#f4efe5";b.style.borderColor="#2a2018";
+  };
+});
+
+document.getElementById("cex-save").onclick=function(){
+  var title=document.getElementById("cex-title").value.trim();
+  var instr=document.getElementById("cex-instr").value.trim();
+  if(!title||!instr)return;
+  custEx.push({title:title,author:"自定义",instruction:instr,t:selCexT});
+  sv("gk_cex",custEx);
+  document.getElementById("cex-title").value="";
+  document.getElementById("cex-instr").value="";
+  document.getElementById("cex-form").style.display="none";
+  renderCexList();
+};
 document.getElementById("new-day-btn").onclick=function(){document.getElementById("ndmodal").style.display="flex";};
 document.getElementById("nd-cancel").onclick=function(){document.getElementById("ndmodal").style.display="none";};
 document.getElementById("nd-ok").onclick=function(){
@@ -638,7 +718,7 @@ document.getElementById("sact").onclick=function(){
     setTimeout(function(){
       window.html2canvas(node,{
         backgroundColor:"#f8f3ea",
-        scale:2,
+        scale:1.5,
         useCORS:false,
         allowTaint:false,
         logging:false,
@@ -646,19 +726,24 @@ document.getElementById("sact").onclick=function(){
         height:node.scrollHeight
       }).then(function(canvas){
         exportImgDone=true;
-        document.getElementById("eimg").src=canvas.toDataURL("image/png");
-        // now switch to img tab to show result
-        switchTab("img");
-        document.getElementById("eimgwrap").style.display="block";
-        document.getElementById("eimgph").style.display="none";
-        self.style.display="none";
-        document.getElementById("sftr-hint").style.display="block";
-        document.getElementById("sftr-hint").textContent="长按图片 → 存储到相册";
-        self.disabled=false;
+        function showImg(src){
+          document.getElementById("eimg").src=src;
+          switchTab("img");
+          document.getElementById("eimgwrap").style.display="block";
+          document.getElementById("eimgph").style.display="none";
+          self.style.display="none";
+          document.getElementById("sftr-hint").style.display="block";
+          document.getElementById("sftr-hint").textContent="长按图片 → 存储到相册";
+          self.disabled=false;
+        }
+        if(canvas.toBlob){
+          canvas.toBlob(function(blob){showImg(URL.createObjectURL(blob));},"image/png");
+        } else {
+          showImg(canvas.toDataURL("image/png"));
+        }
       }).catch(function(err){
-        console.log("h2c error:",err);
+        console.log("h2c:",err);
         self.textContent="生成长图";self.disabled=false;
-        alert("生成失败，请重试");
       });
     },300);
   }
