@@ -627,16 +627,19 @@ document.getElementById("sact").onclick=function(){
     }
     return;
   }
-  // generate image — switch to img tab first
-  switchTab("img");self.textContent="生成中…";self.disabled=true;
+  // generate image — capture FIRST while ecard is still visible, then switch
+  self.textContent="生成中…";self.disabled=true;
   function doCapture(){
     var node=document.getElementById("ecard");
-    // give browser a moment to render
+    // ensure tab-prev is visible so ecard has real dimensions
+    document.getElementById("tab-prev").style.display="block";
+    document.getElementById("tab-img").style.display="none";
+    document.getElementById("tab-txt").style.display="none";
     setTimeout(function(){
       window.html2canvas(node,{
         backgroundColor:"#f8f3ea",
         scale:2,
-        useCORS:false,  // no external resources in card
+        useCORS:false,
         allowTaint:false,
         logging:false,
         width:node.offsetWidth,
@@ -644,6 +647,8 @@ document.getElementById("sact").onclick=function(){
       }).then(function(canvas){
         exportImgDone=true;
         document.getElementById("eimg").src=canvas.toDataURL("image/png");
+        // now switch to img tab to show result
+        switchTab("img");
         document.getElementById("eimgwrap").style.display="block";
         document.getElementById("eimgph").style.display="none";
         self.style.display="none";
@@ -652,9 +657,10 @@ document.getElementById("sact").onclick=function(){
         self.disabled=false;
       }).catch(function(err){
         console.log("h2c error:",err);
-        self.textContent="生成长图";self.disabled=false;switchTab("prev");
+        self.textContent="生成长图";self.disabled=false;
+        alert("生成失败，请重试");
       });
-    },200);
+    },300);
   }
   if(window.html2canvas){doCapture();}
   else{
